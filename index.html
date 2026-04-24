@@ -55,6 +55,9 @@ h1 span { color: var(--gold); }
 .res-text { font-size: 14px; color: var(--ink-mid); }
 .highlight { color: var(--gold); font-weight: 700; }
 
+.detection-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+.chip { font-size: 11px; background: var(--gold-pale); color: var(--ink-mid); border: 1px solid var(--border); padding: 4px 10px; border-radius: 6px; }
+
 .portfolio-box { background: var(--paper); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-top: 10px; }
 .port-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; }
 .port-bar-wrap { height: 10px; background: rgba(0,0,0,0.05); border-radius: 5px; overflow: hidden; display: flex; margin-bottom: 10px; }
@@ -100,8 +103,8 @@ h1 span { color: var(--gold); }
   </div>
 
   <div class="btn-group">
-    <button class="btn btn-outline" id="btnCam" onclick="toggleCamera()" disabled>เปิดกล้อง</button>
-    <button class="btn btn-outline" id="btnFile" onclick="document.getElementById('fileIn').click()" disabled>เลือกรูป</button>
+    <button class="btn btn-outline" id="btnCam" onclick="toggleCamera()">เปิดกล้อง</button>
+    <button class="btn btn-outline" id="btnFile" onclick="document.getElementById('fileIn').click()">เลือกรูป</button>
     <input type="file" id="fileIn" hidden accept="image/*" onchange="handleFile(this)"/>
   </div>
   
@@ -113,12 +116,13 @@ h1 span { color: var(--gold); }
     <div class="res-header">
       <div style="font-size:11px; opacity:0.7; margin-bottom:5px; letter-spacing:2px; font-weight:700;">PHYSIOGNOMY ANALYSIS</div>
       <div class="res-type" id="resType">—</div>
-      <div id="resAgeLabel" style="font-size:12px; margin-top:8px; background:rgba(255,255,255,0.15); display:inline-block; padding:2px 12px; border-radius:10px;">ช่วงอายุ: — ปี</div>
+      <div id="resAgeLabel" style="font-size:12px; margin-top:8px; background:rgba(255,255,255,0.15); display:inline-block; padding:2px 12px; border-radius:10px;">—</div>
     </div>
     <div class="res-body">
       
       <div class="res-section">
-        <span class="res-label">ลักษณะเด่นตามโครงหน้า</span>
+        <span class="res-label">จุดนรลักษณ์ที่ AI ตรวจพบจริง</span>
+        <div class="detection-chips" id="resChips"></div>
         <div class="res-text" id="resShapeReading" style="font-weight:700; color:var(--gold); margin-bottom:10px;">—</div>
         <div class="res-text" id="resDetailedReading">—</div>
       </div>
@@ -169,81 +173,25 @@ let stream = null;
 let currentSource = null;
 
 const SHAPES = {
-  OVAL: {
-    name: "โครงหน้ารูปไข่ (วงรี)",
-    desc: "โชคดีมาก ทรงที่พอดีพอเหมาะ สมบูรณ์แบบ เส้นกรอบใบหน้ารับกันอย่างสมดุลไม่มีเหลี่ยมตรงกราม สัดส่วนใบหน้าเท่ากันแบบ 1:1:1",
-    cat: "STRATEGIC"
-  },
-  RECTANGLE: {
-    name: "โครงหน้าทรงสี่เหลี่ยมผืนผ้า",
-    desc: "โครงหน้าทองคำ สวยแพงเริ่ดแบบตัวแม่ เห็นกรอบหน้าชัด ช่วงกรามเป็นสันโดดเด่น ความกว้างน้อยกว่าความยาว",
-    cat: "AUTHORITY"
-  },
-  HEART: {
-    name: "โครงหน้ารูปหัวใจ",
-    desc: "สวยละมุนแบบสายเกา คางมีความเรียวสวยแบบวีไลน์ หน้าผากกว้างกว่าช่วงคาง โหนกแก้มค่อนข้างสูง",
-    cat: "TRIANGLE"
-  },
-  DIAMOND: {
-    name: "โครงหน้ารูปเพชร",
-    desc: "มีเหลี่ยมค่อนข้างเยอะ เห็นโหนกแก้มชัดเจนที่สุด คางและหน้าผากกว้างเกือบเท่ากัน แต่น้อยกว่าโหนกแก้ม",
-    cat: "INDEPENDENT"
-  },
-  PEAR: {
-    name: "โครงหน้าทรงลูกแพร์",
-    desc: "บริเวณกรามและขากรรไกรกว้างกว่าส่วนอื่นชัดเจน รูปทรงคล้ายสามเหลี่ยมหงาย หน้าผากแคบกว่ากราม",
-    cat: "ACCUMULATOR"
-  },
-  ROUND: {
-    name: "โครงหน้ากลม",
-    desc: "ไม่มีเหลี่ยมให้เห็น เส้นโครงหน้าละมุนรับกันทุกสัดส่วน ดูอ่อนวัยน่ารัก หน้าผากกว้างและมน ช่วงแก้มอิ่ม",
-    cat: "ROUND"
-  },
-  SQUARE: {
-    name: "โครงหน้าทรงสี่เหลี่ยม",
-    desc: "มีเสน่ห์ หรู ดูแพง ความกว้างช่วงหน้าผาก กราม และคางใกล้เคียงเหมือนเส้นตรง ช่วงกรามมีความเหลี่ยมชัดเจน",
-    cat: "SQUARE"
-  }
+  OVAL: { name: "โครงหน้ารูปไข่ (วงรี)", desc: "สมบูรณ์แบบ เส้นกรอบใบหน้ารับกันอย่างสมดุลไม่มีเหลี่ยมตรงกราม", cat: "STRATEGIC" },
+  RECTANGLE: { name: "โครงหน้าทรงสี่เหลี่ยมผืนผ้า", desc: "โครงหน้าทองคำ สวยแพงเริ่ด เห็นกรอบหน้าชัด ช่วงกรามเป็นสันโดดเด่น", cat: "AUTHORITY" },
+  HEART: { name: "โครงหน้ารูปหัวใจ", desc: "ละมุน คางมีความเรียวสวยแบบวีไลน์ หน้าผากกว้างกว่าช่วงคาง", cat: "TRIANGLE" },
+  DIAMOND: { name: "โครงหน้ารูปเพชร", desc: "เห็นโหนกแก้มที่ชัดเจนที่สุด คางและหน้าผากกว้างเกือบเท่ากัน", cat: "INDEPENDENT" },
+  PEAR: { name: "โครงหน้าทรงลูกแพร์", desc: "กรามและขากรรไกรเด่นชัดที่สุด รูปทรงคล้ายสามเหลี่ยมหงาย", cat: "ACCUMULATOR" },
+  ROUND: { name: "โครงหน้ากลม", desc: "ไม่มีเหลี่ยม เส้นโครงหน้าละมุนรับกันทุกสัดส่วน ดูอ่อนวัยน่ารัก", cat: "ROUND" },
+  SQUARE: { name: "โครงหน้าทรงสี่เหลี่ยม", desc: "หรู ดูแพง กรามมีความเหลี่ยมชัดเจน หน้าผากและคางกว้างใกล้เคียงกัน", cat: "SQUARE" }
 };
 
 const CATEGORIES = {
-  ROUND: {
-    title: "นักลงทุนเครือข่ายวาทศิลป์ (Negotiator)",
-    strategy: "เหมาะกับการลงทุนธุรกิจทั่วไปและการเงิน ใช้คอนเนกชัน",
-    assets: "สินทรัพย์: หุ้นสายบริการ, ธุรกิจที่ต้องเจรจา, การลงทุนเชิงสายสัมพันธ์",
-    detail: "วาสนาจากแก้มอิ่ม: บ่งบอกถึงความเป็นมิตร ใจเย็น เข้าสังคมเก่ง มีวาทศิลป์และเล่ห์เหลี่ยมในการเจรจาต่อรองว่องไว"
-  },
-  TRIANGLE: {
-    title: "นักลงทุนนวัตกรรม (Innovation Investor)",
-    strategy: "เหมาะกับการลงทุนที่ใช้วิสัยทัศน์และสติปัญญา",
-    assets: "สินทรัพย์: หุ้นเทคโนโลยี, Start-up, สินทรัพย์ทางปัญญา, โครงการใหม่ๆ",
-    detail: "วาสนาจากหน้าผาก: บ่งบอกถึงความคิดสร้างสรรค์ ฉลาด มีอุดมคติสูง และชอบวางแผนงานล้ำสมัย"
-  },
-  SQUARE: {
-    title: "นักลงทุนสินทรัพย์จริง (Production Investor)",
-    strategy: "เหมาะกับสินทรัพย์ที่จับต้องได้ เน้นความเป็นจริง",
-    assets: "สินทรัพย์: อสังหาริมทรัพย์, อุตสาหกรรมการผลิต, สินค้าโภคภัณฑ์",
-    detail: "วาสนาจากกรามมั่นคง: บ่งบอกถึงนิสัยซื่อสัตย์ ตรงไปตรงมา มั่นคง และความสามารถในการรักษาบริวารในบั้นปลาย"
-  },
-  STRATEGIC: {
-    title: "นักลงทุนเชิงกลยุทธ์ (Strategic Investor)",
-    strategy: "เหมาะกับการวิเคราะห์ข้อมูลซับซ้อนและการวางแผนระยะยาว",
-    assets: "สินทรัพย์: หุ้นคุณค่า (VI), กองทุนบริหารจัดการ, การลงทุนเชิงระบบ",
-    detail: "วังปัญญาที่สมบูรณ์: บ่งบอกถึงสติปัญญาเลิศ วิสัยทัศน์กว้างไกล มักได้รับการสนับสนุนที่ดีจากผู้ใหญ่"
-  },
-  PRESERVER: {
-    title: "เศรษฐีนักสะสมทรัพย์ (Wealth Preserver)",
-    strategy: "เหมาะกับการสะสมทรัพย์และรักษาความมั่งคั่งยั่งยืน",
-    assets: "สินทรัพย์: หุ้นปันผลสูง, ออมทอง, กองทุนสะสมความมั่งคั่งระยะยาว",
-    detail: "วังทรัพย์จมูกรูปชมพู่: บ่งบอกถึงความสามารถในการเก็บออมและรักษาทรัพย์ได้ดีเยี่ยม มีวาสนาเป็นเศรษฐีหรือเจ้าสัว"
-  },
-  AUTHORITY: {
-    title: "นักบริหารพอร์ตพาวเวอร์ (Authority Investor)",
-    strategy: "เหมาะกับงานใหญ่ที่ต้องใช้บารมีและการบริหารจัดการคน",
-    assets: "สินทรัพย์: โครงการขนาดใหญ่ (Project-based), พอร์ตการลงทุนระดับสากล",
-    detail: "วังอำนาจโหนกแก้มสูง: บ่งบอกถึงอำนาจบารมี ความมุ่งมั่น และศักยภาพในการทำงานใหญ่ให้สำเร็จ"
-  }
+  ROUND: { title: "นักลงทุนเครือข่ายวาทศิลป์", strategy: "เน้นคอนเนกชันและการเจรจาต่อรอง", assets: "หุ้นสายบริการ, ธุรกิจคู่ค้า, สินทรัพย์กระแสสังคม", detail: "ความละมุนของโครงหน้าบ่งบอกถึงวาทศิลป์ที่ดีเยี่ยม เข้าสังคมเก่ง" },
+  TRIANGLE: { title: "นักลงทุนนวัตกรรมล้ำสมัย", strategy: "เน้นวิสัยทัศน์และโครงการแห่งอนาคต", assets: "หุ้นเทคโนโลยี, Startup, สินทรัพย์ดิจิทัล", detail: "หน้าผากกว้างบ่งบอกถึงสติปัญญาและวิสัยทัศน์ที่กว้างไกล" },
+  SQUARE: { title: "นักลงทุนสินทรัพย์เชิงประจักษ์", strategy: "เน้นความจริงและสินทรัพย์ที่จับต้องได้", assets: "อสังหาริมทรัพย์, อุตสาหกรรม, ทองคำ", detail: "กรามที่ชัดเจนสะท้อนถึงความมั่นคง ซื่อสัตย์ และความจริงจัง" },
+  STRATEGIC: { title: "นักลงทุนเชิงกลยุทธ์", strategy: "เน้นการวิเคราะห์ซับซ้อนและข้อมูลเชิงลึก", assets: "หุ้นคุณค่า (VI), กองทุนรวมบริหารจัดการ", detail: "สัดส่วนใบหน้าที่สมดุลแสดงถึงกระบวนการคิดที่เป็นระบบ" },
+  PRESERVER: { title: "นักสะสมความมั่งคั่ง", strategy: "เน้นการเก็บออมและรักษาทรัพย์สิน", assets: "หุ้นปันผลคุณภาพ, ตราสารหนี้มั่งคั่ง", detail: "ลักษณะจมูกที่อิ่มหนาบ่งบอกถึงวาสนาในการสะสมทรัพย์" },
+  AUTHORITY: { title: "นักบริหารพอร์ตทรงพลัง", strategy: "เน้นงานใหญ่ บารมี และความกล้าเสี่ยง", assets: "Private Equity, โครงการขนาดใหญ่", detail: "โหนกแก้มและกรามที่เด่นชัดสื่อถึงอำนาจและการตัดสินใจที่เด็ดขาด" }
 };
+
+const EMOTIONS_TH = { happy: "โหงวเฮ้งเมตตา", neutral: "โหงวเฮ้งสุขุม", angry: "โหงวเฮ้งเด็ดขาด", surprised: "โหงวเฮ้งตื่นตัว", sad: "โหงวเฮ้งรอบคอบ", fearful: "โหงวเฮ้งระวังภัย", disgusted: "โหงวเฮ้งชัดเจน" };
 
 // --- INITIALIZATION ---
 window.addEventListener('load', async () => {
@@ -263,28 +211,23 @@ window.addEventListener('load', async () => {
     }
     modelsLoaded = true;
     document.getElementById('statusCard').style.display = 'none';
-    document.getElementById('btnCam').disabled = false;
-    document.getElementById('btnFile').disabled = false;
+    document.getElementById('btnAnalyze').disabled = false;
   } catch(e) { alert("AI Setup Error: " + e.message); }
 });
 
-// --- UI CONTROLS ---
 async function toggleCamera() {
   const vid = document.getElementById('camVideo');
   const ph = document.getElementById('placeholder');
   if (stream) {
     stream.getTracks().forEach(t => t.stop()); stream = null;
     vid.style.display = 'none'; ph.style.display = 'flex';
-    document.getElementById('btnCam').textContent = 'เปิดกล้อง';
   } else {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
       vid.srcObject = stream; vid.style.display = 'block';
       ph.style.display = 'none'; document.getElementById('previewImg').style.display = 'none';
-      document.getElementById('btnCam').textContent = '✕ ปิดกล้อง';
-      document.getElementById('btnAnalyze').disabled = false;
       currentSource = 'video';
-    } catch(e) { alert("เปิดกล้องไม่ได้: " + e.message); }
+    } catch(e) { alert("เปิดกล้องไม่ได้"); }
   }
 }
 
@@ -297,127 +240,112 @@ function handleFile(input) {
     preview.src = e.target.result; preview.style.display = 'block';
     document.getElementById('placeholder').style.display = 'none';
     document.getElementById('camVideo').style.display = 'none';
-    document.getElementById('btnAnalyze').disabled = false;
     currentSource = 'img';
   };
   reader.readAsDataURL(input.files[0]);
 }
 
-// --- CORE ANALYSIS ---
 async function runAnalysis() {
   const btn = document.getElementById('btnAnalyze');
   const source = currentSource === 'video' ? document.getElementById('camVideo') : document.getElementById('previewImg');
   document.getElementById('scanLine').style.display = 'block';
-  btn.disabled = true; btn.textContent = 'กำลังประมวลผล...';
+  btn.disabled = true;
 
   try {
     const det = await faceapi.detectSingleFace(source, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
       .withFaceLandmarks().withFaceExpressions().withAgeAndGender();
 
-    if (!det) { alert("ไม่พบใบหน้าที่ชัดเจน กรุณาลองใหม่อีกครั้ง"); } 
+    if (!det) { alert("ไม่พบใบหน้า กรุณาลองใหม่"); } 
     else {
-      const results = parseDetailedPhysiognomy(det);
-      displayResult(results, det.age);
+      const results = parseTechnicalPhysiognomy(det);
+      displayResult(results, det);
     }
   } catch(e) { alert("Error: " + e.message); }
-  finally { document.getElementById('scanLine').style.display = 'none'; btn.disabled = false; btn.textContent = 'วิเคราะห์โหงวเฮ้งเศรษฐี ✦'; }
+  finally { document.getElementById('scanLine').style.display = 'none'; btn.disabled = false; }
 }
 
-function parseDetailedPhysiognomy(det) {
+function parseTechnicalPhysiognomy(det) {
   const lm = det.landmarks.positions;
   
-  // 1. Precise Measurements
+  // 1.Measurements
   const jawWidth = dist(lm[0], lm[16]);
   const foreheadWidth = dist(lm[17], lm[26]);
   const cheekWidth = dist(lm[1], lm[15]);
   const faceHeight = dist(lm[8], lm[27]) * 2.3;
   const ratioH = jawWidth / faceHeight;
 
-  const foreheadH = dist(lm[21], lm[27]); 
-  const noseH = dist(lm[27], lm[33]);
-  const noseW = dist(lm[31], lm[35]);
+  // Eye Ratio (Height/Width)
+  const leftEye = det.landmarks.getLeftEye();
+  const eyeH = dist(leftEye[1], leftEye[5]);
+  const eyeW = dist(leftEye[0], leftEye[3]);
+  const eyeRatio = eyeH / eyeW;
+
+  // Mouth Scale
   const mouthW = dist(lm[48], lm[54]);
+  const mouthScale = mouthW / jawWidth;
 
-  // 2. Shape Detection Logic (7 Specific Shapes)
+  // Nose Scale
+  const noseW = dist(lm[31], lm[35]);
+
+  // Expression
+  const expr = det.expressions;
+  const topExpr = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
+
+  // 2. Shape Logic
   let shapeKey = "OVAL";
-
-  if (ratioH > 0.95 && cheekWidth / jawWidth < 1.05) {
-    shapeKey = "ROUND";
-  } else if (ratioH < 0.75 && jawWidth / foreheadWidth > 0.9) {
-    shapeKey = "RECTANGLE";
-  } else if (jawWidth / foreheadWidth < 0.85) {
-    shapeKey = "HEART";
-  } else if (cheekWidth > foreheadWidth * 1.1 && cheekWidth > jawWidth * 1.1) {
-    shapeKey = "DIAMOND";
-  } else if (jawWidth > foreheadWidth * 1.15) {
-    shapeKey = "PEAR";
-  } else if (Math.abs(jawWidth - foreheadWidth) < 10 && ratioH > 0.85) {
-    shapeKey = "SQUARE";
-  } else {
-    shapeKey = "OVAL";
-  }
+  if (ratioH > 0.95) shapeKey = "ROUND";
+  else if (ratioH < 0.75) shapeKey = "RECTANGLE";
+  else if (jawWidth / foreheadWidth < 0.85) shapeKey = "HEART";
+  else if (cheekWidth > foreheadWidth * 1.05 && cheekWidth > jawWidth * 1.05) shapeKey = "DIAMOND";
+  else if (jawWidth > foreheadWidth * 1.1) shapeKey = "PEAR";
+  else if (Math.abs(jawWidth - foreheadWidth) < 15 && ratioH > 0.85) shapeKey = "SQUARE";
 
   // 3. Category Scoring
   let finalCat = SHAPES[shapeKey].cat;
+  if (noseW > mouthW * 0.65) finalCat = "PRESERVER";
+  if (eyeRatio > 0.3) finalCat = "STRATEGIC";
+  if (mouthScale > 0.45) finalCat = "AUTHORITY";
 
-  // Feature Override (ถ้าลักษณะเด่นบางอย่างแรงกว่าโครงหน้า)
-  if (noseW > mouthW * 0.65) finalCat = "PRESERVER"; // วังทรัพย์เด่นมาก
-  if (foreheadH > noseH * 0.98) finalCat = "STRATEGIC"; // วังปัญญาเด่นมาก
-
-  // Warnings
-  let warnings = [];
-  if (foreheadH < noseH * 0.6) warnings.push("หน้าผากแคบ: สติปัญญาอาจถูกปิดกั้นด้วยอารมณ์ชั่ววูบ ต้องพึ่งพาตนเองและมีสติในการลงทุน");
-  if (lm[33].y < lm[31].y - 2) warnings.push("จมูกเชิด: บ่งบอกถึงการเก็บทรัพย์ไม่อยู่ ควรระวังการใช้เงินเกินตัวในสินทรัพย์เสี่ยงสูง");
-
-  return { shapeKey, finalCat, warnings };
+  return { shapeKey, finalCat, eyeRatio, mouthScale, topExpr, gender: det.gender, age: det.age };
 }
 
 function dist(p1, p2) { return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)); }
 
-function displayResult(res, age) {
+function displayResult(res, rawDet) {
   const shape = SHAPES[res.shapeKey];
   const data = CATEGORIES[res.finalCat];
-  const ageInt = Math.round(age);
+  const ageInt = Math.round(res.age);
   
   document.getElementById('resType').textContent = data.title;
-  document.getElementById('resAgeLabel').textContent = `ช่วงอายุ: ${ageInt} ปี`;
+  document.getElementById('resAgeLabel').textContent = `${res.gender === 'male' ? 'ชาย' : 'หญิง'} / ประมาณ ${ageInt} ปี`;
+  
+  // Chips
+  const chips = [
+    `รูปหน้า: ${res.shapeKey}`,
+    `ดวงตา: ${res.eyeRatio > 0.28 ? 'โตกว้าง' : 'เรียวยาว'}`,
+    `รูปปาก: ${res.mouthScale > 0.42 ? 'กว้าง' : 'เล็ก'}`,
+    `อารมณ์: ${EMOTIONS_TH[res.topExpr]}`
+  ];
+  document.getElementById('resChips').innerHTML = chips.map(c => `<span class="chip">${c}</span>`).join('');
+
   document.getElementById('resShapeReading').innerHTML = `${shape.name}<br/><span style="font-size:13px; font-weight:normal; color:var(--ink-soft);">${shape.desc}</span>`;
-  document.getElementById('resDetailedReading').innerHTML = data.detail;
+  document.getElementById('resDetailedReading').innerHTML = `${data.detail} พร้อมด้วย${EMOTIONS_TH[res.topExpr]}ที่สะท้อนผ่านทางแววตา`;
   document.getElementById('resStrategy').textContent = data.strategy;
   document.getElementById('resAssets').textContent = data.assets;
   
-  // -- Life Cycle Allocation Logic (Updated) --
+  // Portfolio Logic
   let stockP = 0;
   let ageAdvice = "";
-  
-  if (ageInt <= 30) {
-    stockP = 80;
-    ageAdvice = "วัยเริ่มต้นทำงาน: พลังของเวลาและการเติบโตเชิงรุก เน้นพอร์ตแบบ Aggressive Growth เพื่อผลตอบแทนทบต้นระยะยาว ควรมีทองคำ 5-10% กระจายความเสี่ยง";
-  } else if (ageInt <= 45) {
-    stockP = 50;
-    ageAdvice = "วัยสร้างครอบครัว (Sandwich Generation): เน้นความสมดุลระหว่างการเติบโตและการควบคุมความเสี่ยง (Balanced) เริ่มสะสมหุ้นปันผลและประกันสุขภาพ/ชีวิต";
-  } else if (ageInt <= 60) {
-    stockP = 30;
-    ageAdvice = "วัยเตรียมเกษียณ (Peak Earning): เน้นการรักษาความมั่งคั่ง (Wealth Preservation) ลดความเสี่ยง และใช้สิทธิ์ลดหย่อนภาษี RMF/SSF/ThaiESG ให้เต็มที่";
-  } else {
-    stockP = 15;
-    ageAdvice = "วัยเกษียณ: ยุคแห่งการใช้จ่ายและบริหารรายได้ประจำ เน้นสินทรัพย์สภาพคล่องสูงและความปลอดภัยสูงสุดเพื่อใช้จ่ายสม่ำเสมอและชนะเงินเฟ้อ";
-  }
-
-  const safeP = 100 - stockP;
+  if (ageInt <= 30) { stockP = 80; ageAdvice = "วัยเริ่มต้นทำงาน: เน้น Aggressive Growth ใช้พลังของเวลาให้เกิดประโยชน์สูงสุด"; }
+  else if (ageInt <= 45) { stockP = 50; ageAdvice = "วัยสร้างครอบครัว: เน้นความสมดุลระหว่างการเติบโตและการควบคุมความเสี่ยง"; }
+  else if (ageInt <= 60) { stockP = 30; ageAdvice = "วัยเตรียมเกษียณ: เน้นการรักษาความมั่งคั่ง (Wealth Preservation) ลดความเสี่ยง"; }
+  else { stockP = 15; ageAdvice = "วัยเกษียณ: บริหารรายได้ประจำและสู้กับเงินเฟ้อ เน้นความปลอดภัยสูงสุด"; }
 
   document.getElementById('stockPct').textContent = stockP + "%";
-  document.getElementById('safePct').textContent = safeP + "%";
+  document.getElementById('safePct').textContent = (100 - stockP) + "%";
   document.getElementById('stockBar').style.width = stockP + "%";
-  document.getElementById('safeBar').style.width = safeP + "%";
-  document.getElementById('resAgeAdvice').innerHTML = `<strong>กลยุทธ์ตามช่วงวัย:</strong> ${ageAdvice}<br/><br/><small>• กฎพื้นฐาน: 100 ลบด้วยอายุ<br/>• แนะนำกลยุทธ์ Core & Satellite และการรีบาลานซ์พอร์ตทุก 6-12 เดือน</small>`;
-
-  const warnBox = document.getElementById('resWarning');
-  const warnTxt = document.getElementById('resWarningTxt');
-  if (res.warnings.length > 0) {
-    warnBox.style.display = 'block';
-    warnTxt.innerHTML = res.warnings.map(w => `• ${w}`).join('<br>');
-  } else { warnBox.style.display = 'none'; }
+  document.getElementById('safeBar').style.width = (100 - stockP) + "%";
+  document.getElementById('resAgeAdvice').innerHTML = `<strong>กลยุทธ์ตามช่วงวัย:</strong> ${ageAdvice}`;
 
   document.getElementById('resCard').style.display = 'block';
   document.getElementById('resCard').scrollIntoView({ behavior: 'smooth' });
