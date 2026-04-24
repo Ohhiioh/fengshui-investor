@@ -3,120 +3,73 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>โหงวเฮ้ง นักลงทุน — ฟรี 100% ไม่ส่งรูปไปไหน</title>
-<meta name="description" content="วิเคราะห์โหงวเฮ้งในเครื่องของคุณ ไม่ส่งรูปไปไหน ฟรี 100%"/>
+<title>นรลักษณ์นักลงทุน AI — ฉบับสมบูรณ์</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=Noto+Sans+Thai:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<!-- Face-API.js -->
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.js"></script>
 <style>
 :root {
   --gold: #C9922A; --gold-light: #F2D98B; --gold-pale: #FBF5E6;
   --ink: #1A1208; --ink-mid: #4A3B22; --ink-soft: #8C7355;
   --paper: #FDF8EF; --paper-dark: #F5EDD8;
-  --red: #B83232; --red-soft: #F9EAEA;
-  --green: #2A7A4A; --green-soft: #EAF5EE;
+  --red: #B83232; --green: #2A7A4A;
   --border: rgba(201,146,42,0.25);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans Thai',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans Thai', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; line-height: 1.6; }
+.page { position: relative; max-width: 650px; margin: 0 auto; padding: 2rem 1.25rem; }
 
-.page{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:2rem 1.25rem 4rem}
+header { text-align: center; margin-bottom: 2rem; }
+.header-deco { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 1rem; }
+.deco-line { height: 1px; width: 60px; background: linear-gradient(to right, transparent, var(--gold)); }
+.deco-line.r { background: linear-gradient(to left, transparent, var(--gold)); }
+.deco-icon { width: 44px; height: 44px; border: 1px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--gold-pale); }
+h1 { font-family: 'Noto Serif Thai', serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+h1 span { color: var(--gold); }
+.privacy-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--green); background: #EAF5EE; border: 1px solid rgba(42,122,74,0.2); padding: 4px 12px; border-radius: 20px; margin-top: 8px; }
 
-/* HEADER */
-header{text-align:center;margin-bottom:2rem}
-.header-deco{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:1rem}
-.deco-line{height:1px;width:60px;background:linear-gradient(to right,transparent,var(--gold))}
-.deco-line.r{background:linear-gradient(to left,transparent,var(--gold))}
-.deco-icon{width:44px;height:44px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--gold-pale)}
-h1{font-family:'Noto Serif Thai',serif;font-size:clamp(24px,6vw,32px);font-weight:700;color:var(--ink);margin-bottom:4px}
-h1 span{color:var(--gold)}
-.tagline{font-size:13px;color:var(--ink-soft)}
-.privacy-badge{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;color:var(--green);background:var(--green-soft);border:1px solid rgba(42,122,74,0.2);padding:3px 10px;border-radius:20px}
+.status-card { border: 1px solid var(--border); border-radius: 12px; background: var(--paper-dark); padding: 15px; margin-bottom: 1.5rem; }
+.bar-wrap { height: 6px; background: rgba(201,146,42,0.1); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.bar { height: 100%; background: var(--gold); width: 0%; transition: width 0.3s; }
 
-/* MODEL LOADING */
-.model-status{border:1px solid var(--border);border-radius:12px;background:var(--paper-dark);padding:14px 16px;margin-bottom:1.25rem;font-size:13px}
-.model-bar-wrap{height:4px;background:rgba(201,146,42,0.15);border-radius:2px;margin-top:8px;overflow:hidden}
-.model-bar{height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width .4s ease}
-.model-label{display:flex;justify-content:space-between;align-items:center}
-.model-label span{color:var(--ink-soft)}
-.model-label strong{color:var(--ink-mid);font-weight:500}
+.camera-box { border: 1px solid var(--border); border-radius: 20px; background: #000; overflow: hidden; position: relative; aspect-ratio: 3/4; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+#camVideo, #previewImg { width: 100%; height: 100%; object-fit: cover; display: none; }
+.scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--gold); box-shadow: 0 0 15px var(--gold); animation: scan 2s linear infinite; display: none; z-index: 10; }
+@keyframes scan { from { top: 0%; } to { top: 100%; } }
 
-/* CAMERA */
-.camera-card{border:1px solid var(--border);border-radius:16px;background:var(--paper-dark);overflow:hidden;margin-bottom:1rem;position:relative}
-#camVideo,#preview{width:100%;display:block;max-height:340px;object-fit:cover;background:var(--paper-dark)}
-#preview{display:none}
-#camVideo{display:none}
-.upload-area{padding:2.5rem 1rem;text-align:center;cursor:pointer;transition:background .2s}
-.upload-area:hover{background:rgba(201,146,42,0.05)}
-.upload-icon{width:52px;height:52px;border-radius:50%;background:var(--gold-pale);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 10px}
-.upload-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:3px}
-.upload-sub{font-size:13px;color:var(--ink-soft)}
-#fileInput{display:none}
+.btn-group { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+.btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--gold); font-family: inherit; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; }
+.btn-outline { background: transparent; color: var(--gold); }
+.btn-gold { background: var(--gold); color: white; border: none; }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-/* OVERLAY CANVAS */
-.cam-wrap{position:relative}
-#overlayCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.result-card { display: none; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); border: 1px solid var(--border); border-radius: 24px; background: white; overflow: hidden; margin-bottom: 3rem; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+.res-header { background: var(--ink); color: white; padding: 2rem 1.5rem; text-align: center; border-bottom: 4px solid var(--gold); }
+.res-type { font-family: 'Noto Serif Thai', serif; font-size: 30px; color: var(--gold-light); letter-spacing: -0.5px; }
+.res-body { padding: 1.75rem; background: #fff; }
+.res-section { margin-bottom: 1.75rem; border-left: 3px solid var(--gold-pale); padding-left: 18px; position: relative; }
+.res-section::before { content: ''; position: absolute; left: -3px; top: 0; height: 30%; border-left: 3px solid var(--gold); }
+.res-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 1px; }
+.res-text { font-size: 15px; color: var(--ink-mid); }
+.highlight { color: var(--gold); font-weight: 700; }
 
-/* BUTTONS */
-.btn-row{display:flex;gap:8px;margin-bottom:1.25rem}
-.btn{flex:1;padding:11px 8px;border-radius:10px;border:1px solid var(--border);font-family:'Noto Sans Thai',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
-.btn-outline{background:var(--paper-dark);color:var(--ink-mid)}
-.btn-outline:hover{background:var(--gold-pale);border-color:var(--gold)}
-.btn-outline:disabled{opacity:.35;cursor:not-allowed}
-.btn-primary{background:var(--gold);color:#fff;border-color:var(--gold);flex:1.5;font-size:15px}
-.btn-primary:hover{background:#b07c20}
-.btn-primary:disabled{opacity:.35;cursor:not-allowed}
+.portfolio-box { background: var(--paper); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-top: 10px; }
+.port-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; }
+.port-bar-wrap { height: 8px; background: rgba(0,0,0,0.05); border-radius: 4px; overflow: hidden; display: flex; }
+.port-stock { background: var(--gold); height: 100%; }
+.port-safe { background: var(--ink-soft); height: 100%; }
 
-/* STATUS */
-.status-msg{font-size:13px;color:var(--ink-soft);text-align:center;padding:8px;min-height:28px}
-.status-msg.ok{color:var(--green)}
-.status-msg.err{color:var(--red)}
+.age-advice { background: var(--gold-pale); padding: 12px 15px; border-radius: 12px; border: 1px dashed var(--gold); margin-top: 10px; font-size: 13px; }
+.warning-box { background: #FFF5F5; border: 1px solid #FED7D7; padding: 15px; border-radius: 16px; margin-top: 15px; }
+.warning-title { color: var(--red); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
 
-/* LOADING */
-.loading-state{display:none;text-align:center;padding:2rem;border:1px solid var(--border);border-radius:16px;background:var(--paper-dark);margin-bottom:1rem}
-.trigram{font-size:38px;animation:spin 3s linear infinite;display:inline-block;margin-bottom:10px}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.loading-text{font-size:14px;color:var(--ink-soft)}
-.loading-dots::after{content:'';animation:dots 1.5s steps(4,end) infinite}
-@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
-
-/* RESULT */
-.result-card{display:none;border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .4s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.result-header{background:var(--ink);padding:1.5rem 1.25rem;text-align:center}
-.result-type-label{font-size:11px;color:var(--gold-light);letter-spacing:1.5px;margin-bottom:5px;text-transform:uppercase}
-.result-type{font-family:'Noto Serif Thai',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px}
-.result-badge{display:inline-block;font-size:12px;padding:3px 14px;border-radius:20px;background:rgba(201,146,42,0.2);color:var(--gold-light);border:1px solid rgba(201,146,42,0.35)}
-.result-body{padding:1.25rem;background:var(--paper)}
-.section{margin-bottom:1.25rem}
-.section-title{font-size:11px;letter-spacing:1px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-.face-reading{font-size:14px;color:var(--ink-mid);line-height:1.8;padding:12px 14px;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 8px 8px 0}
-
-/* RAW DATA */
-.raw-data{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-.raw-chip{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--paper-dark);border:1px solid var(--border);color:var(--ink-mid);display:flex;align-items:center;gap:4px}
-.raw-chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-
-.traits{display:flex;flex-wrap:wrap;gap:6px}
-.trait{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--paper-dark);border:1px solid var(--border);color:var(--ink-mid)}
-.invest-list{list-style:none}
-.invest-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
-.invest-item:last-child{border-bottom:none;padding-bottom:0}
-.invest-num{width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.invest-name{font-size:14px;font-weight:500;color:var(--ink)}
-.invest-reason{font-size:13px;color:var(--ink-soft);margin-top:2px}
-.mantra{text-align:center;padding:14px;background:var(--ink);border-radius:10px;font-family:'Noto Serif Thai',serif;font-size:15px;color:var(--gold-light);line-height:1.7;margin-bottom:1rem}
-.mantra::before{content:'"'}.mantra::after{content:'"'}
-.disclaimer{font-size:11px;color:var(--ink-soft);text-align:center;line-height:1.6;padding:10px 14px;background:var(--paper-dark);border-radius:8px}
-.retry-btn{display:block;width:100%;margin-top:1rem;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--paper-dark);color:var(--ink-mid);font-family:'Noto Sans Thai',sans-serif;font-size:14px;cursor:pointer;transition:all .15s}
-.retry-btn:hover{background:var(--gold-pale);border-color:var(--gold)}
-footer{text-align:center;margin-top:3rem;font-size:12px;color:var(--ink-soft)}
-footer a{color:var(--gold);text-decoration:none}
+.wisdom-footer { padding: 20px; text-align: center; font-family: 'Noto Serif Thai', serif; font-size: 14px; color: var(--ink-soft); border-top: 1px solid var(--border); background: var(--paper-dark); }
 </style>
 </head>
 <body>
+
 <div class="page">
   <header>
     <div class="header-deco">
@@ -124,532 +77,289 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="deco-icon">🔮</div>
       <div class="deco-line r"></div>
     </div>
-    <h1>โหงวเฮ้ง<span>นักลงทุน</span></h1>
-    <p class="tagline">อ่านใบหน้าตามศาสตร์จีนโบราณ · รู้สไตล์การลงทุน</p>
-    <div class="privacy-badge">🔒 ประมวลผลในเครื่องคุณ ไม่ส่งรูปไปไหน ฟรี 100%</div>
+    <h1>นรลักษณ์<span>นักลงทุน</span></h1>
+    <p class="tagline">วิเคราะห์วาสนาการจัดการหลักทรัพย์ตามช่วงอายุและศาสตร์โบราณ</p>
+    <div class="privacy-badge">✓ AI ประมวลผลในเครื่อง ปลอดภัย 100%</div>
   </header>
 
-  <!-- Model loading bar -->
-  <div class="model-status" id="modelStatus">
-    <div class="model-label">
-      <strong id="modelLabel">กำลังโหลด AI Models</strong>
-      <span id="modelPct">0%</span>
+  <div class="status-card" id="statusCard">
+    <div style="display:flex; justify-content:space-between; font-size:12px;">
+      <span id="statusTxt">กำลังเตรียมคัมภีร์นรลักษณ์...</span>
+      <span id="statusPct">0%</span>
     </div>
-    <div class="model-bar-wrap"><div class="model-bar" id="modelBar"></div></div>
+    <div class="bar-wrap"><div class="bar" id="statusBar"></div></div>
   </div>
 
-  <!-- Camera / Upload -->
-  <div class="camera-card">
-    <div class="cam-wrap" id="camWrap">
-      <video id="camVideo" autoplay playsinline muted></video>
-      <canvas id="overlayCanvas"></canvas>
-    </div>
-    <img id="preview" alt="รูปใบหน้า"/>
-    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">📸</div>
-      <div class="upload-title">แตะเพื่ออัปโหลดรูปภาพ</div>
-      <div class="upload-sub">หรือกด "เปิดกล้อง" ด้านล่าง</div>
+  <div class="camera-box">
+    <div class="scan-line" id="scanLine"></div>
+    <video id="camVideo" autoplay playsinline muted></video>
+    <img id="previewImg" />
+    <div id="placeholder" style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); text-align:center; padding:2rem; font-size:14px;">
+      ถ่ายรูปหรือเลือกรูปภาพเพื่อเปิดคำทำนาย
     </div>
   </div>
-  <input type="file" id="fileInput" accept="image/*"/>
 
-  <div class="btn-row">
-    <button class="btn btn-outline" id="camBtn" onclick="toggleCamera()" disabled>📷 เปิดกล้อง</button>
-    <button class="btn btn-outline" id="snapBtn" onclick="snap()" disabled>✂️ ถ่ายรูป</button>
-    <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()" disabled>วิเคราะห์โหงวเฮ้ง ✦</button>
+  <div class="btn-group">
+    <button class="btn btn-outline" id="btnCam" onclick="toggleCamera()" disabled>เปิดกล้อง</button>
+    <button class="btn btn-outline" id="btnFile" onclick="document.getElementById('fileIn').click()" disabled>เลือกรูป</button>
+    <input type="file" id="fileIn" hidden accept="image/*" onchange="handleFile(this)"/>
   </div>
+  
+  <button class="btn btn-gold" id="btnAnalyze" style="width:100%; margin-bottom:2rem; height:54px;" onclick="runAnalysis()" disabled>
+    วิเคราะห์โหงวเฮ้งเศรษฐี ✦
+  </button>
 
-  <div class="status-msg" id="statusMsg">กำลังโหลด AI models กรุณารอสักครู่…</div>
-
-  <div class="loading-state" id="loadingState">
-    <div class="trigram">☯</div>
-    <div class="loading-text">กำลังอ่านโหงวเฮ้ง<span class="loading-dots"></span></div>
-  </div>
-
-  <div class="result-card" id="resultCard">
-    <div class="result-header">
-      <div class="result-type-label">ประเภทนักลงทุนของคุณ</div>
-      <div class="result-type" id="rType">—</div>
-      <span class="result-badge" id="rBadge">—</span>
+  <div class="result-card" id="resCard">
+    <div class="res-header">
+      <div style="font-size:11px; opacity:0.7; margin-bottom:5px; letter-spacing:2px; font-weight:700;">PHYSIOGNOMY ANALYSIS</div>
+      <div class="res-type" id="resType">—</div>
+      <div id="resAgeLabel" style="font-size:12px; margin-top:8px; background:rgba(255,255,255,0.15); display:inline-block; padding:2px 12px; border-radius:10px;">ช่วงอายุ: — ปี</div>
     </div>
-    <div class="result-body">
-      <div class="section">
-        <div class="section-title">ข้อมูลใบหน้าที่วิเคราะห์ได้</div>
-        <div class="raw-data" id="rRawData"></div>
+    <div class="res-body">
+      
+      <div class="res-section">
+        <span class="res-label">การอ่านนรลักษณ์และวาสนา</span>
+        <div class="res-text" id="resDetailedReading">—</div>
       </div>
-      <div class="section">
-        <div class="section-title">การอ่านโหงวเฮ้ง</div>
-        <div class="face-reading" id="rFaceReading">—</div>
+
+      <div class="res-section">
+        <span class="res-label">สินทรัพย์แนะนำตามนรลักษณ์ศาสตร์</span>
+        <div class="res-text highlight" id="resAssets">—</div>
       </div>
-      <div class="section">
-        <div class="section-title">ลักษณะนิสัย</div>
-        <div class="traits" id="rTraits"></div>
+
+      <div class="res-section">
+        <span class="res-label">สัดส่วนพอร์ตแนะนำตามช่วงอายุ (กฎ 100-อายุ)</span>
+        <div class="portfolio-box">
+          <div class="port-row">
+            <span>หุ้น / สินทรัพย์เสี่ยง</span>
+            <strong id="stockPct">0%</strong>
+          </div>
+          <div class="port-bar-wrap">
+            <div id="stockBar" class="port-stock"></div>
+            <div id="safeBar" class="port-safe"></div>
+          </div>
+          <div class="port-row" style="margin-top:10px; font-size:11px; opacity:0.6;">
+            <span>สินทรัพย์เสี่ยงต่ำ / ตราสารหนี้</span>
+            <strong id="safePct">0%</strong>
+          </div>
+        </div>
+        <div class="age-advice" id="resAgeAdvice">—</div>
       </div>
-      <div class="section">
-        <div class="section-title">สินทรัพย์และกลยุทธ์ที่เหมาะกับคุณ</div>
-        <ul class="invest-list" id="rInvestments"></ul>
+      
+      <div class="warning-box" id="resWarning" style="display:none;">
+        <div class="warning-title">⚠️ ข้อควรระวังสำหรับการลงทุน</div>
+        <div class="res-text" id="resWarningTxt" style="font-size:13px;">—</div>
       </div>
-      <div class="mantra" id="rMantra"></div>
-      <div class="disclaimer">⚠️ เนื้อหานี้เพื่อความสนุกเท่านั้น ไม่ใช่คำแนะนำทางการเงิน<br/>ก่อนลงทุนควรศึกษาข้อมูลและปรึกษาผู้เชี่ยวชาญด้านการเงิน</div>
-      <button class="retry-btn" onclick="resetAll()">🔄 วิเคราะห์ใหม่</button>
+
+      <button class="btn btn-outline" style="width:100%; margin-top:2rem;" onclick="resetAll()">วิเคราะห์คนใหม่</button>
+    </div>
+    <div class="wisdom-footer">
+      "นรลักษณ์บอกแนวโน้ม ความรู้บอกแนวทาง<br/>วินัยบอกความสำเร็จ"
     </div>
   </div>
-
-  <footer>
-    ใช้ <a href="https://github.com/justadudewhohacks/face-api.js" target="_blank">face-api.js</a> ·
-    ประมวลผลในเครื่อง ฟรี 100% · ไม่ต้องมี API Key
-  </footer>
 </div>
 
 <script>
-// ─────────────────────────────────────────────
-// CONSTANTS & STATE
-// ─────────────────────────────────────────────
+// --- CONFIG & DATA ---
 const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model';
 let modelsLoaded = false;
 let stream = null;
-let cameraOpen = false;
-let capturedImageEl = null; // img or video element to detect from
+let currentSource = null;
 
-const $ = id => document.getElementById(id);
-const video    = $('camVideo');
-const preview  = $('preview');
-const canvas   = $('overlayCanvas');
-const uploadArea = $('uploadArea');
-const modelBar = $('modelBar');
-const modelPct = $('modelPct');
-const modelLabel = $('modelLabel');
-const modelStatus = $('modelStatus');
-const statusMsg = $('statusMsg');
-const camBtn   = $('camBtn');
-const snapBtn  = $('snapBtn');
-const analyzeBtn = $('analyzeBtn');
-const loadingState = $('loadingState');
-const resultCard = $('resultCard');
-
-// ─────────────────────────────────────────────
-// LOAD MODELS
-// ─────────────────────────────────────────────
-async function loadModels() {
-  const steps = [
-    { label: 'SSD MobileNet (ตรวจจับใบหน้า)', fn: () => faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL) },
-    { label: 'Face Landmarks (68 จุด)', fn: () => faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL) },
-    { label: 'Age & Gender', fn: () => faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL) },
-    { label: 'Face Expressions (อารมณ์)', fn: () => faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL) },
-  ];
-
-  for (let i = 0; i < steps.length; i++) {
-    modelLabel.textContent = 'โหลด: ' + steps[i].label;
-    await steps[i].fn();
-    const pct = Math.round(((i + 1) / steps.length) * 100);
-    modelBar.style.width = pct + '%';
-    modelPct.textContent = pct + '%';
+const INTERPRETATIONS = {
+  ROUND: {
+    title: "นักลงทุนเครือข่ายวาทศิลป์",
+    assets: "ธุรกิจบริการ, ตลาดหุ้น (Trading), ธุรกิจที่ต้องใช้คอนเนกชัน",
+    detail: "ใบหน้าทรงกลม บ่งบอกถึงนิสัยใจเย็น เข้าสังคมเก่ง มีเล่ห์เหลี่ยมในการเจรจาต่อรอง เหมาะกับการลงทุนที่ใช้สายสัมพันธ์"
+  },
+  TRIANGLE: {
+    title: "นักลงทุนเชิงนวัตกรรม",
+    assets: "หุ้นกลุ่มเทคโนโลยี, Start-up, สินทรัพย์ทางปัญญา",
+    detail: "ใบหน้าทรงสามเหลี่ยม บ่งบอกถึงสติปัญญา ฉลาด วิสัยทัศน์กว้างไกล เหมาะกับโครงการที่ต้องใช้ความคิดสร้างสรรค์"
+  },
+  SQUARE: {
+    title: "นักลงทุนสินทรัพย์จริง",
+    assets: "อสังหาริมทรัพย์, อุตสาหกรรมการผลิต, ทองคำ",
+    detail: "ใบหน้าทรงสี่เหลี่ยม บ่งบอกถึงความซื่อสัตย์ มั่นคง ตรงไปตรงมา เหมาะกับสินทรัพย์ที่จับต้องได้มากกว่าจินตนาการ"
+  },
+  STRATEGIC: {
+    title: "นักลงทุนเชิงกลยุทธ์",
+    assets: "หุ้นคุณค่า (VI), กองทุนบริหารจัดการความเสี่ยง",
+    detail: "หน้าผากกว้างอิ่มเอิบ (วังการงาน) แสดงถึงสติปัญญาเลิศ เหมาะกับการเป็นนักลงทุนเชิงกลยุทธ์ที่ต้องวิเคราะห์ข้อมูลซับซ้อน"
+  },
+  PRESERVER: {
+    title: "เศรษฐีนักออม",
+    assets: "สินทรัพย์ปันผลสูง, กองทุนสะสมความมั่งคั่ง",
+    detail: "จมูกรูปชมพู่ปีกหนา (วังทรัพย์) บ่งบอกถึงวาสนาการเก็บเงินเก่งและความมั่งคั่งที่มั่นคงในระยะยาว"
+  },
+  AUTHORITY: {
+    title: "นักบริหารพอร์ตพาวเวอร์",
+    assets: "โครงการขนาดใหญ่, สินทรัพย์ผันผวนสูง, เก็งกำไร",
+    detail: "โหนกแก้มสูงมีเนื้อ บ่งบอกถึงอำนาจบารมี และความกล้าเสี่ยง กล้าได้กล้าเสียในงานใหญ่"
   }
-
-  modelsLoaded = true;
-  modelStatus.style.background = 'var(--green-soft)';
-  modelStatus.style.borderColor = 'rgba(42,122,74,0.2)';
-  modelLabel.textContent = '✓ โหลด AI Models สำเร็จ';
-  modelLabel.style.color = 'var(--green)';
-  modelPct.style.color = 'var(--green)';
-
-  camBtn.disabled = false;
-  setStatus('พร้อมแล้ว! อัปโหลดรูปหรือเปิดกล้องเพื่อเริ่ม', 'ok');
-  uploadArea.onclick = () => $('fileInput').click();
-}
-
-window.addEventListener('load', () => {
-  // wait for face-api script
-  const interval = setInterval(() => {
-    if (typeof faceapi !== 'undefined') {
-      clearInterval(interval);
-      loadModels().catch(e => {
-        setStatus('โหลด models ไม่สำเร็จ: ' + e.message, 'err');
-      });
-    }
-  }, 100);
-});
-
-// ─────────────────────────────────────────────
-// FILE UPLOAD
-// ─────────────────────────────────────────────
-$('fileInput').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  preview.onload = () => {
-    capturedImageEl = preview;
-    preview.style.display = 'block';
-    uploadArea.style.display = 'none';
-    if (stream) stopCamera();
-    video.style.display = 'none';
-    canvas.style.display = 'none';
-    analyzeBtn.disabled = false;
-    resultCard.style.display = 'none';
-    setStatus('รูปพร้อมแล้ว กด "วิเคราะห์โหงวเฮ้ง"', 'ok');
-  };
-  preview.src = url;
-  $('fileInput').value = '';
-});
-
-// ─────────────────────────────────────────────
-// CAMERA
-// ─────────────────────────────────────────────
-async function toggleCamera() {
-  if (cameraOpen) { stopCamera(); return; }
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 480 } });
-    video.srcObject = stream;
-    video.style.display = 'block';
-    canvas.style.display = 'block';
-    preview.style.display = 'none';
-    uploadArea.style.display = 'none';
-    snapBtn.disabled = false;
-    camBtn.textContent = '✕ ปิดกล้อง';
-    cameraOpen = true;
-    capturedImageEl = null;
-    analyzeBtn.disabled = false;
-    setStatus('เปิดกล้องแล้ว กด "ถ่ายรูป" หรือ "วิเคราะห์" ได้เลย', 'ok');
-    startLiveDetection();
-  } catch(e) {
-    setStatus('ไม่สามารถเข้าถึงกล้อง กรุณาอัปโหลดรูปแทน', 'err');
-  }
-}
-
-function stopCamera() {
-  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-  video.style.display = 'none';
-  canvas.style.display = 'none';
-  if (!capturedImageEl) uploadArea.style.display = '';
-  snapBtn.disabled = true;
-  camBtn.textContent = '📷 เปิดกล้อง';
-  cameraOpen = false;
-  liveActive = false;
-}
-
-function snap() {
-  const c = document.createElement('canvas');
-  c.width = video.videoWidth || 640;
-  c.height = video.videoHeight || 480;
-  c.getContext('2d').drawImage(video, 0, 0);
-  preview.onload = () => { capturedImageEl = preview; };
-  preview.src = c.toDataURL('image/jpeg', 0.85);
-  preview.style.display = 'block';
-  stopCamera();
-  analyzeBtn.disabled = false;
-  setStatus('ถ่ายรูปแล้ว กด "วิเคราะห์โหงวเฮ้ง"', 'ok');
-}
-
-// ─────────────────────────────────────────────
-// LIVE FACE DETECTION (while camera open)
-// ─────────────────────────────────────────────
-let liveActive = false;
-async function startLiveDetection() {
-  liveActive = true;
-  while (liveActive && cameraOpen) {
-    if (video.readyState === 4) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const det = await faceapi.detectAllFaces(video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
-        .withFaceLandmarks();
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (det.length > 0) {
-        faceapi.draw.drawDetections(canvas, det);
-        faceapi.draw.drawFaceLandmarks(canvas, det);
-      }
-    }
-    await new Promise(r => setTimeout(r, 150));
-  }
-}
-
-// ─────────────────────────────────────────────
-// ANALYZE
-// ─────────────────────────────────────────────
-async function analyze() {
-  if (!modelsLoaded) { setStatus('กำลังโหลด models อยู่ กรุณารอ', 'err'); return; }
-
-  const src = cameraOpen ? video : capturedImageEl;
-  if (!src) { setStatus('กรุณาเปิดกล้องหรืออัปโหลดรูปก่อน', 'err'); return; }
-
-  loadingState.style.display = 'block';
-  resultCard.style.display = 'none';
-  analyzeBtn.disabled = true;
-  setStatus('');
-
-  try {
-    const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 });
-    const det = await faceapi.detectSingleFace(src, options)
-      .withFaceLandmarks()
-      .withFaceExpressions()
-      .withAgeAndGender();
-
-    if (!det) {
-      setStatus('ไม่พบใบหน้าในรูป กรุณาลองใหม่ให้เห็นหน้าชัดขึ้น', 'err');
-      return;
-    }
-
-    const result = interpretFengShui(det);
-    renderResult(result, det);
-  } catch(e) {
-    setStatus('เกิดข้อผิดพลาด: ' + e.message, 'err');
-  } finally {
-    loadingState.style.display = 'none';
-    analyzeBtn.disabled = false;
-  }
-}
-
-// ─────────────────────────────────────────────
-// FENGSHUI INTERPRETATION ENGINE
-// ─────────────────────────────────────────────
-function interpretFengShui(det) {
-  const expr = det.expressions;
-  const age  = Math.round(det.age);
-  const gender = det.gender; // 'male' | 'female'
-
-  // Dominant emotion
-  const emotions = ['neutral','happy','sad','angry','fearful','disgusted','surprised'];
-  let dominant = 'neutral', maxScore = 0;
-  emotions.forEach(e => { if (expr[e] > maxScore) { maxScore = expr[e]; dominant = e; } });
-
-  // Face shape via landmark geometry
-  const lm = det.landmarks.positions;
-  const faceWidth  = dist(lm[0], lm[16]);
-  const faceHeight = dist(lm[8],  lm[27]);
-  const ratio = faceWidth / faceHeight;
-  // Jaw width vs cheekbone
-  const jawWidth   = dist(lm[4], lm[12]);
-  const cheekWidth = dist(lm[1], lm[15]);
-  const jawRatio   = jawWidth / cheekWidth;
-
-  let faceShape = 'round';
-  if (ratio < 0.72)      faceShape = 'long';
-  else if (ratio > 0.92) faceShape = 'wide';
-  else if (jawRatio > 0.88) faceShape = 'square';
-  else if (jawRatio < 0.70) faceShape = 'diamond';
-
-  // Eye openness (brow to eye distance)
-  const leftEyeOpen  = det.landmarks.getLeftEye();
-  const eyeH = Math.abs(leftEyeOpen[1].y - leftEyeOpen[5].y);
-  const eyeW = Math.abs(leftEyeOpen[0].x - leftEyeOpen[3].x);
-  const eyeRatio = eyeH / eyeW;
-  const eyeType = eyeRatio > 0.35 ? 'wide' : eyeRatio > 0.22 ? 'normal' : 'narrow';
-
-  // Mouth width
-  const mouth = det.landmarks.getMouth();
-  const mouthW = dist(mouth[0], mouth[6]);
-  const mouthScale = mouthW / faceWidth;
-  const mouthType = mouthScale > 0.44 ? 'wide' : mouthScale > 0.33 ? 'normal' : 'small';
-
-  // ── INVESTOR PROFILES ──────────────────────
-  // Each profile has weight modifiers; we score and pick best
-  const profiles = [
-    {
-      id: 'dragon',
-      name: 'มังกรทอง',
-      badge: 'กล้าหาญ · มีวิสัยทัศน์',
-      element: 'ไฟ 🔥',
-      conditions: score => {
-        if (dominant === 'happy') score += 3;
-        if (dominant === 'surprised') score += 2;
-        if (faceShape === 'wide' || faceShape === 'square') score += 3;
-        if (eyeType === 'wide') score += 2;
-        if (mouthType === 'wide') score += 2;
-        if (age < 35) score += 1;
-        return score;
-      },
-      faceReading: `ใบหน้า${faceShapeNameTH(faceShape)}บ่งบอกถึงความกล้าหาญและพลังงานที่แรงกล้า ดวงตา${eyeNameTH(eyeType)}แสดงถึงวิสัยทัศน์ที่กว้างไกล มองเห็นโอกาสที่คนอื่นมองข้าม ริมฝีปาก${mouthNameTH(mouthType)}สะท้อนความมั่นใจในการตัดสินใจ`,
-      traits: ['กล้าตัดสินใจ', 'มีวิสัยทัศน์', 'ชอบความเสี่ยงสูง', 'เป็นผู้นำ'],
-      investments: [
-        { name: 'หุ้นเติบโต (Growth Stock)', reason: 'เหมาะกับผู้ที่กล้ารับความผันผวนเพื่อผลตอบแทนสูง' },
-        { name: 'Startup / Venture Capital', reason: 'มองเห็นโอกาสในธุรกิจระยะเริ่มต้นที่คนอื่นยังไม่เห็น' },
-        { name: 'Crypto & Digital Assets', reason: 'ชอบตลาดที่มีความผันผวนสูงและโอกาสผลตอบแทนระดับ 10x' },
-      ],
-      mantra: 'ความเสี่ยงคือโอกาสที่คนขี้กลัวยังไม่เห็น',
-    },
-    {
-      id: 'turtle',
-      name: 'เต่าทอง',
-      badge: 'อดทน · มั่งคั่งยั่งยืน',
-      element: 'ดิน 🌍',
-      conditions: score => {
-        if (dominant === 'neutral') score += 3;
-        if (faceShape === 'round') score += 3;
-        if (eyeType === 'narrow') score += 2;
-        if (mouthType === 'small') score += 2;
-        if (age >= 35) score += 2;
-        return score;
-      },
-      faceReading: `ใบหน้า${faceShapeNameTH(faceShape)}มีพลังงานดินที่มั่นคง บ่งชี้ถึงความอดทนและความมั่นคงทางจิตใจ ดวงตา${eyeNameTH(eyeType)}แสดงถึงการสังเกตและรอคอยจังหวะที่ใช่ เป็นผู้ที่ไม่หวั่นไหวต่อความผันผวนระยะสั้น`,
-      traits: ['อดทน', 'รอบคอบ', 'มั่นคง', 'ชอบแผนระยะยาว'],
-      investments: [
-        { name: 'กองทุน DCA ระยะยาว', reason: 'ลงทุนสม่ำเสมอทุกเดือน ใช้ประโยชน์จากดอกเบี้ยทบต้น' },
-        { name: 'REITs / อสังหาริมทรัพย์', reason: 'สินทรัพย์มั่นคง สร้างรายได้สม่ำเสมอ เหมาะกับนักลงทุนอดทน' },
-        { name: 'พันธบัตรและตราสารหนี้', reason: 'ให้ผลตอบแทนสม่ำเสมอ ความเสี่ยงต่ำ นอนหลับสบาย' },
-      ],
-      mantra: 'ความมั่งคั่งที่แท้จริงสร้างได้ด้วยเวลาและความสม่ำเสมอ',
-    },
-    {
-      id: 'phoenix',
-      name: 'ฟีนิกซ์เงิน',
-      badge: 'ฉลาด · ยืดหยุ่น',
-      element: 'โลหะ ⚡',
-      conditions: score => {
-        if (dominant === 'surprised' || dominant === 'happy') score += 2;
-        if (faceShape === 'diamond' || faceShape === 'long') score += 3;
-        if (eyeType === 'wide') score += 2;
-        if (mouthType === 'normal') score += 2;
-        return score;
-      },
-      faceReading: `ใบหน้า${faceShapeNameTH(faceShape)}บ่งบอกถึงความฉลาดและความยืดหยุ่น ดวงตา${eyeNameTH(eyeType)}สะท้อนความสามารถในการวิเคราะห์ข้อมูลได้อย่างรวดเร็ว มีพลังงานโลหะที่ทำให้ตัดสินใจได้คมคาย`,
-      traits: ['วิเคราะห์เก่ง', 'ยืดหยุ่นสูง', 'เรียนรู้เร็ว', 'ชอบข้อมูล'],
-      investments: [
-        { name: 'ETF หลากหลาย (Global ETF)', reason: 'กระจายความเสี่ยงหลายประเทศ เหมาะกับผู้ที่มองภาพรวมได้กว้าง' },
-        { name: 'Swing Trading หุ้น', reason: 'ใช้ทักษะวิเคราะห์ Technical ทำกำไรระยะสั้น-กลาง' },
-        { name: 'กองทุน Quant / Factor', reason: 'ลงทุนผ่านโมเดลที่ใช้ข้อมูล เหมาะกับคนชอบวิทยาศาสตร์' },
-      ],
-      mantra: 'ข้อมูลคือทองคำ ผู้ที่อ่านข้อมูลได้เร็วกว่าคือผู้ชนะ',
-    },
-    {
-      id: 'tiger',
-      name: 'เสือขาว',
-      badge: 'เด็ดเดี่ยว · ตรงไปตรงมา',
-      element: 'น้ำ 💧',
-      conditions: score => {
-        if (dominant === 'angry' || dominant === 'neutral') score += 2;
-        if (faceShape === 'square') score += 3;
-        if (eyeType === 'narrow') score += 1;
-        if (mouthType === 'wide') score += 2;
-        if (gender === 'male') score += 1;
-        return score;
-      },
-      faceReading: `กรามและใบหน้า${faceShapeNameTH(faceShape)}แสดงถึงความเด็ดเดี่ยวและความมุ่งมั่น พลังงานน้ำไหลลึกแต่แรง มีความสามารถในการยืนหยัดในสถานการณ์กดดัน และไม่หวั่นไหวง่าย`,
-      traits: ['เด็ดเดี่ยว', 'ไม่กลัวกดดัน', 'มีวินัย', 'ยืนหยัดได้นาน'],
-      investments: [
-        { name: 'Value Investing (แบบ Buffett)', reason: 'ซื้อหุ้นดีราคาถูก ถือยาวจนถึงมูลค่าแท้จริง' },
-        { name: 'Commodity (ทองคำ น้ำมัน)', reason: 'สินทรัพย์จับต้องได้ ช่วยป้องกันเงินเฟ้อได้ดี' },
-        { name: 'หุ้นปันผลสูง (Dividend)', reason: 'รับกระแสเงินสดสม่ำเสมอ เหมาะกับนักลงทุนมีวินัย' },
-      ],
-      mantra: 'ซื้อดี ถือนาน นอนหลับสบาย',
-    },
-    {
-      id: 'crane',
-      name: 'นกกระเรียนทอง',
-      badge: 'ละเอียด · สมดุล',
-      element: 'ไม้ 🌿',
-      conditions: score => {
-        if (dominant === 'happy' || dominant === 'neutral') score += 2;
-        if (faceShape === 'long' || faceShape === 'oval') score += 3;
-        if (eyeType === 'normal') score += 3;
-        if (mouthType === 'normal') score += 3;
-        return score;
-      },
-      faceReading: `สัดส่วนใบหน้า${faceShapeNameTH(faceShape)}สะท้อนความสมดุลและความสง่างาม พลังงานไม้แทนการเติบโตอย่างมั่นคงและยั่งยืน มีความละเอียดรอบคอบในการพิจารณา ไม่โลภและไม่กลัวจนเกินไป`,
-      traits: ['สมดุล', 'ละเอียดรอบคอบ', 'ยั่งยืน', 'ไม่โลภ'],
-      investments: [
-        { name: 'พอร์ต 60/40 (หุ้น/พันธบัตร)', reason: 'พอร์ตคลาสสิกที่สมดุลระหว่างการเติบโตและความปลอดภัย' },
-        { name: 'กองทุน ESG / Sustainable', reason: 'ลงทุนในบริษัทที่ดูแลสิ่งแวดล้อมและสังคม เติบโตยาวนาน' },
-        { name: 'Dollar Cost Averaging ทั่วโลก', reason: 'กระจายลงทุนหลายภูมิภาค ลดความเสี่ยงจากตลาดเดียว' },
-      ],
-      mantra: 'ความสมดุลคือความมั่งคั่งที่แท้จริงของชีวิต',
-    },
-  ];
-
-  let best = profiles[0], bestScore = -Infinity;
-  profiles.forEach(p => {
-    const s = p.conditions(0);
-    if (s > bestScore) { bestScore = s; best = p; }
-  });
-
-  return {
-    profile: best,
-    rawData: {
-      age,
-      gender: gender === 'male' ? 'ชาย' : 'หญิง',
-      dominant: emotionTH(dominant),
-      dominantScore: Math.round(maxScore * 100),
-      faceShape: faceShapeNameTH(faceShape),
-      eyeType: eyeNameTH(eyeType),
-      mouthType: mouthNameTH(mouthType),
-    }
-  };
-}
-
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
-function dist(a, b) { return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)); }
-
-function emotionTH(e) {
-  return { neutral:'ปกติ', happy:'มีความสุข', sad:'เศร้า', angry:'เข้มแข็ง', fearful:'ระมัดระวัง', disgusted:'เด็ดขาด', surprised:'ตื่นตัว' }[e] || e;
-}
-function faceShapeNameTH(s) {
-  return { round:'กลมมน', long:'รูปไข่ยาว', wide:'กว้าง', square:'เหลี่ยม', diamond:'เพชร', oval:'รูปไข่' }[s] || s;
-}
-function eyeNameTH(e) { return { wide:'โตกว้าง', normal:'พอดี', narrow:'เรียวยาว' }[e] || e; }
-function mouthNameTH(m) { return { wide:'กว้าง', normal:'พอดี', small:'เล็กบาง' }[m] || m; }
-
-const CHIP_COLORS = {
-  อายุ:'#C9922A', เพศ:'#7A5C2A', อารมณ์:'#2A7A4A',
-  รูปหน้า:'#4A2A7A', ดวงตา:'#2A4A7A', ปาก:'#7A2A4A',
 };
 
-// ─────────────────────────────────────────────
-// RENDER
-// ─────────────────────────────────────────────
-function renderResult({ profile, rawData }) {
-  $('rType').textContent = profile.name;
-  $('rBadge').textContent = profile.badge;
-  $('rFaceReading').textContent = profile.faceReading;
+// --- INITIALIZATION ---
+window.addEventListener('load', async () => {
+  try {
+    const loader = [
+      { n: 'Detector', f: () => faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL) },
+      { n: 'Landmarks', f: () => faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL) },
+      { n: 'Expressions', f: () => faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL) },
+      { n: 'Age/Gender', f: () => faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL) }
+    ];
+    for(let i=0; i<loader.length; i++) {
+      document.getElementById('statusTxt').textContent = 'กำลังเตรียม: ' + loader[i].n;
+      await loader[i].f();
+      let p = Math.round(((i+1)/loader.length)*100);
+      document.getElementById('statusBar').style.width = p + '%';
+      document.getElementById('statusPct').textContent = p + '%';
+    }
+    modelsLoaded = true;
+    document.getElementById('statusCard').style.display = 'none';
+    document.getElementById('btnCam').disabled = false;
+    document.getElementById('btnFile').disabled = false;
+  } catch(e) { alert("AI Setup Error: " + e.message); }
+});
 
-  // Raw data chips
-  const chips = [
-    { label: 'อายุ', value: rawData.age + ' ปี' },
-    { label: 'เพศ', value: rawData.gender },
-    { label: 'อารมณ์', value: rawData.dominant + ' ' + rawData.dominantScore + '%' },
-    { label: 'รูปหน้า', value: rawData.faceShape },
-    { label: 'ดวงตา', value: rawData.eyeType },
-    { label: 'ปาก', value: rawData.mouthType },
-  ];
-  const rawEl = $('rRawData');
-  rawEl.innerHTML = chips.map(c => `
-    <div class="raw-chip">
-      <span class="dot" style="background:${CHIP_COLORS[c.label] || '#888'}"></span>
-      <span style="color:var(--ink-soft)">${c.label}:</span>
-      <strong style="font-weight:500;color:var(--ink)">${c.value}</strong>
-    </div>`).join('');
+// --- CAMERA & FILE ---
+async function toggleCamera() {
+  const vid = document.getElementById('camVideo');
+  const ph = document.getElementById('placeholder');
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop()); stream = null;
+    vid.style.display = 'none'; ph.style.display = 'flex';
+    document.getElementById('btnCam').textContent = 'เปิดกล้อง';
+  } else {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+      vid.srcObject = stream; vid.style.display = 'block';
+      ph.style.display = 'none'; document.getElementById('previewImg').style.display = 'none';
+      document.getElementById('btnCam').textContent = '✕ ปิดกล้อง';
+      document.getElementById('btnAnalyze').disabled = false;
+      currentSource = 'video';
+    } catch(e) { alert("เปิดกล้องไม่ได้: " + e.message); }
+  }
+}
 
-  // Traits
-  $('rTraits').innerHTML = profile.traits.map(t => `<span class="trait">${t}</span>`).join('');
+function handleFile(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const preview = document.getElementById('previewImg');
+    if(stream) toggleCamera();
+    preview.src = e.target.result; preview.style.display = 'block';
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('camVideo').style.display = 'none';
+    document.getElementById('btnAnalyze').disabled = false;
+    currentSource = 'img';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
 
-  // Investments
-  $('rInvestments').innerHTML = profile.investments.map((inv, i) => `
-    <li class="invest-item">
-      <div class="invest-num">${i + 1}</div>
-      <div>
-        <div class="invest-name">${inv.name}</div>
-        <div class="invest-reason">${inv.reason}</div>
-      </div>
-    </li>`).join('');
+// --- ANALYSIS ---
+async function runAnalysis() {
+  const btn = document.getElementById('btnAnalyze');
+  const source = currentSource === 'video' ? document.getElementById('camVideo') : document.getElementById('previewImg');
+  document.getElementById('scanLine').style.display = 'block';
+  btn.disabled = true; btn.textContent = 'กำลังพินิจนรลักษณ์...';
 
-  $('rMantra').textContent = profile.mantra;
-  resultCard.style.display = 'block';
-  resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  try {
+    const det = await faceapi.detectSingleFace(source, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
+      .withFaceLandmarks().withFaceExpressions().withAgeAndGender();
+
+    if (!det) { alert("ไม่พบใบหน้า กรุณาปรับตำแหน่งให้ชัดเจน"); } 
+    else {
+      const results = parsePhysiognomy(det);
+      displayResult(results, det.age);
+    }
+  } catch(e) { alert("Error: " + e.message); }
+  finally { document.getElementById('scanLine').style.display = 'none'; btn.disabled = false; btn.textContent = 'วิเคราะห์โหงวเฮ้งเศรษฐี ✦'; }
+}
+
+function parsePhysiognomy(det) {
+  const lm = det.landmarks.positions;
+  const jawWidth = dist(lm[0], lm[16]);
+  const faceHeight = dist(lm[8], lm[27]) * 2.3;
+  const ratio = jawWidth / faceHeight;
+  const jawSharpness = dist(lm[4], lm[12]) / jawWidth;
+  
+  let shape = 'OVAL';
+  if (ratio > 0.9) shape = 'ROUND';
+  else if (jawSharpness > 0.92) shape = 'SQUARE';
+  else if (ratio < 0.78) shape = 'TRIANGLE';
+
+  const foreheadH = dist(lm[21], lm[27]); 
+  const noseH = dist(lm[27], lm[33]);
+  const isHighForehead = foreheadH > (noseH * 0.85);
+  const noseW = dist(lm[31], lm[35]);
+  const isPearNose = noseW > (dist(lm[48], lm[54]) * 0.6);
+  const isHighCheek = (dist(lm[1], lm[15]) / jawWidth) > 1.05;
+
+  let warnings = [];
+  if (foreheadH < noseH * 0.6) warnings.push("หน้าผากแคบ: การตัดสินใจอาจไม่ราบรื่น ต้องพึ่งพาตนเองเป็นหลักและรอบคอบเป็นพิเศษ");
+  if (lm[33].y < lm[31].y) warnings.push("จมูกเชิด: เก็บทรัพย์ไม่อยู่ ใช้จ่ายเก่ง ควรระวังการลงทุนที่มีความเสี่ยงสูงหรือใช้เงินก้อนใหญ่");
+
+  let cat = shape;
+  if (isHighForehead) cat = "STRATEGIC";
+  if (isHighCheek) cat = "AUTHORITY";
+  if (isPearNose) cat = "PRESERVER";
+
+  return { cat, warnings };
+}
+
+function dist(p1, p2) { return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)); }
+
+function displayResult(res, age) {
+  const data = INTERPRETATIONS[res.cat] || INTERPRETATIONS.ROUND;
+  const ageInt = Math.round(age);
+  
+  document.getElementById('resType').textContent = data.title;
+  document.getElementById('resAgeLabel').textContent = `ช่วงอายุ: ${ageInt} ปี`;
+  document.getElementById('resDetailedReading').innerHTML = data.detail;
+  document.getElementById('resAssets').textContent = data.assets;
+  
+  // -- Age Based Advice & Portfolio Logic --
+  let stockP = 100 - ageInt;
+  if (stockP > 80) stockP = 80; // Cap at 80% based on user criteria
+  if (stockP < 0) stockP = 0;
+  
+  let safeP = 100 - stockP;
+  let ageAdvice = "";
+
+  if (ageInt < 20) {
+    ageAdvice = "วัยเรียน (อายุน้อยกว่า 20 ปี): เน้นการออมผ่านทองคำ, สลากออมทรัพย์ หรือเปิดบัญชีกองทุนรวมร่วมกับผู้ปกครอง เพื่อสร้างนิสัยการออม";
+    stockP = 50; safeP = 50; // Special case for children
+  } else if (ageInt <= 30) {
+    ageAdvice = "วัยเริ่มต้นทำงาน: รับความเสี่ยงได้สูงที่สุด ควรเน้นหุ้นเติบโต (High Growth) หรือกองทุนต่างประเทศเพื่อให้เงินเติบโตมากที่สุด";
+  } else if (ageInt <= 45) {
+    ageAdvice = "วัยสร้างครอบครัว: รายได้สูงขึ้นแต่ภาระก็สูงตาม ควรเริ่มกระจายความเสี่ยงไปสู่กองทุนตราสารหนี้ หรืออสังหาริมทรัพย์/REITs";
+  } else if (ageInt <= 55) {
+    ageAdvice = "วัยใกล้เกษียณ: เน้นความปลอดภัยของเงินต้น ลดการลงทุนในหุ้นที่ผันผวนสูง เตรียมสภาพคล่องเพื่อใช้จ่ายหลังเกษียณ";
+  } else {
+    ageAdvice = "วัยเกษียณ: เน้นสภาพคล่องและความปลอดภัยสูงสุด เช่น เงินฝากดอกเบี้ยสูง กองทุนรวมตลาดเงิน เพื่อให้มีเงินใช้จ่ายสม่ำเสมอ";
+  }
+
+  document.getElementById('stockPct').textContent = stockP + "%";
+  document.getElementById('safePct').textContent = safeP + "%";
+  document.getElementById('stockBar').style.width = stockP + "%";
+  document.getElementById('safeBar').style.width = safeP + "%";
+  document.getElementById('resAgeAdvice').textContent = ageAdvice;
+
+  const warnBox = document.getElementById('resWarning');
+  const warnTxt = document.getElementById('resWarningTxt');
+  if (res.warnings.length > 0) {
+    warnBox.style.display = 'block';
+    warnTxt.innerHTML = res.warnings.map(w => `• ${w}`).join('<br>');
+  } else { warnBox.style.display = 'none'; }
+
+  document.getElementById('resCard').style.display = 'block';
+  document.getElementById('resCard').scrollIntoView({ behavior: 'smooth' });
 }
 
 function resetAll() {
-  resultCard.style.display = 'none';
-  preview.style.display = 'none';
-  preview.src = '';
-  uploadArea.style.display = '';
-  capturedImageEl = null;
-  analyzeBtn.disabled = false;
-  setStatus('พร้อมแล้ว! อัปโหลดรูปหรือเปิดกล้องเพื่อเริ่ม', 'ok');
-}
-
-function setStatus(msg, type = '') {
-  statusMsg.textContent = msg;
-  statusMsg.className = 'status-msg' + (type ? ' ' + type : '');
+  document.getElementById('resCard').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
