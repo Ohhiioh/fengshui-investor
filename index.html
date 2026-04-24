@@ -47,21 +47,21 @@ h1 span { color: var(--gold); }
 .result-card { display: none; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); border: 1px solid var(--border); border-radius: 24px; background: white; overflow: hidden; margin-bottom: 3rem; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
 @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 .res-header { background: var(--ink); color: white; padding: 2rem 1.5rem; text-align: center; border-bottom: 4px solid var(--gold); }
-.res-type { font-family: 'Noto Serif Thai', serif; font-size: 30px; color: var(--gold-light); letter-spacing: -0.5px; }
+.res-type { font-family: 'Noto Serif Thai', serif; font-size: 24px; color: var(--gold-light); letter-spacing: -0.5px; }
 .res-body { padding: 1.75rem; background: #fff; }
-.res-section { margin-bottom: 1.75rem; border-left: 3px solid var(--gold-pale); padding-left: 18px; position: relative; }
+.res-section { margin-bottom: 1.5rem; border-left: 3px solid var(--gold-pale); padding-left: 18px; position: relative; }
 .res-section::before { content: ''; position: absolute; left: -3px; top: 0; height: 30%; border-left: 3px solid var(--gold); }
 .res-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 1px; }
-.res-text { font-size: 15px; color: var(--ink-mid); }
+.res-text { font-size: 14px; color: var(--ink-mid); }
 .highlight { color: var(--gold); font-weight: 700; }
 
 .portfolio-box { background: var(--paper); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-top: 10px; }
 .port-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; }
-.port-bar-wrap { height: 8px; background: rgba(0,0,0,0.05); border-radius: 4px; overflow: hidden; display: flex; }
-.port-stock { background: var(--gold); height: 100%; }
-.port-safe { background: var(--ink-soft); height: 100%; }
+.port-bar-wrap { height: 10px; background: rgba(0,0,0,0.05); border-radius: 5px; overflow: hidden; display: flex; margin-bottom: 10px; }
+.port-stock { background: var(--gold); height: 100%; transition: width 1s ease-in-out; }
+.port-safe { background: var(--ink-soft); height: 100%; transition: width 1s ease-in-out; }
 
-.age-advice { background: var(--gold-pale); padding: 12px 15px; border-radius: 12px; border: 1px dashed var(--gold); margin-top: 10px; font-size: 13px; }
+.age-advice { background: var(--gold-pale); padding: 12px 15px; border-radius: 12px; border: 1px dashed var(--gold); margin-top: 10px; font-size: 13px; color: var(--ink-mid); }
 .warning-box { background: #FFF5F5; border: 1px solid #FED7D7; padding: 15px; border-radius: 16px; margin-top: 15px; }
 .warning-title { color: var(--red); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
 
@@ -78,7 +78,7 @@ h1 span { color: var(--gold); }
       <div class="deco-line r"></div>
     </div>
     <h1>นรลักษณ์<span>นักลงทุน</span></h1>
-    <p class="tagline">วิเคราะห์วาสนาการจัดการหลักทรัพย์ตามช่วงอายุและศาสตร์โบราณ</p>
+    <p class="tagline">วิเคราะห์วาสนาและการบริหารหลักทรัพย์ตามศาสตร์โบราณอัจฉริยะ</p>
     <div class="privacy-badge">✓ AI ประมวลผลในเครื่อง ปลอดภัย 100%</div>
   </header>
 
@@ -118,17 +118,18 @@ h1 span { color: var(--gold); }
     <div class="res-body">
       
       <div class="res-section">
-        <span class="res-label">การอ่านนรลักษณ์และวาสนา</span>
+        <span class="res-label">การอ่านนรลักษณ์ (นับตามจุดยุทธศาสตร์)</span>
         <div class="res-text" id="resDetailedReading">—</div>
       </div>
 
       <div class="res-section">
-        <span class="res-label">สินทรัพย์แนะนำตามนรลักษณ์ศาสตร์</span>
-        <div class="res-text highlight" id="resAssets">—</div>
+        <span class="res-label">กลยุทธ์การลงทุนที่เหมาะสม</span>
+        <div class="res-text highlight" id="resStrategy">—</div>
+        <div class="res-text" id="resAssets" style="font-size: 13px; margin-top: 5px;">—</div>
       </div>
 
       <div class="res-section">
-        <span class="res-label">สัดส่วนพอร์ตแนะนำตามช่วงอายุ (กฎ 100-อายุ)</span>
+        <span class="res-label">สัดส่วนพอร์ตแนะนำ (กฎ 100-อายุ และ Life Cycle)</span>
         <div class="portfolio-box">
           <div class="port-row">
             <span>หุ้น / สินทรัพย์เสี่ยง</span>
@@ -138,7 +139,7 @@ h1 span { color: var(--gold); }
             <div id="stockBar" class="port-stock"></div>
             <div id="safeBar" class="port-safe"></div>
           </div>
-          <div class="port-row" style="margin-top:10px; font-size:11px; opacity:0.6;">
+          <div class="port-row" style="font-size:11px; opacity:0.6;">
             <span>สินทรัพย์เสี่ยงต่ำ / ตราสารหนี้</span>
             <strong id="safePct">0%</strong>
           </div>
@@ -166,36 +167,42 @@ let modelsLoaded = false;
 let stream = null;
 let currentSource = null;
 
-const INTERPRETATIONS = {
+const CATEGORIES = {
   ROUND: {
-    title: "นักลงทุนเครือข่ายวาทศิลป์",
-    assets: "ธุรกิจบริการ, ตลาดหุ้น (Trading), ธุรกิจที่ต้องใช้คอนเนกชัน",
-    detail: "ใบหน้าทรงกลม บ่งบอกถึงนิสัยใจเย็น เข้าสังคมเก่ง มีเล่ห์เหลี่ยมในการเจรจาต่อรอง เหมาะกับการลงทุนที่ใช้สายสัมพันธ์"
+    title: "นักลงทุนเครือข่ายวาทศิลป์ (Finance/Negotiator)",
+    strategy: "เหมาะกับการลงทุนธุรกิจทั่วไปและการเงิน ใช้คอนเนกชัน",
+    assets: "สินทรัพย์: หุ้นสายบริการ, ธุรกิจที่ต้องเจรจา, การลงทุนเชิงสายสัมพันธ์",
+    detail: "ใบหน้าทรงกลม แก้มอิ่ม: บ่งบอกถึงความเป็นมิตร ใจเย็น เข้าสังคมเก่ง มีวาทศิลป์และเล่ห์เหลี่ยมในการเจรจาต่อรองว่องไว"
   },
   TRIANGLE: {
-    title: "นักลงทุนเชิงนวัตกรรม",
-    assets: "หุ้นกลุ่มเทคโนโลยี, Start-up, สินทรัพย์ทางปัญญา",
-    detail: "ใบหน้าทรงสามเหลี่ยม บ่งบอกถึงสติปัญญา ฉลาด วิสัยทัศน์กว้างไกล เหมาะกับโครงการที่ต้องใช้ความคิดสร้างสรรค์"
+    title: "นักลงทุนนวัตกรรม (Innovation/Ideology)",
+    strategy: "เหมาะกับการลงทุนที่ใช้วิสัยทัศน์และสติปัญญา",
+    assets: "สินทรัพย์: หุ้นเทคโนโลยี, Start-up, สินทรัพย์ทางปัญญา, โครงการใหม่ๆ",
+    detail: "ใบหน้าทรงสามเหลี่ยม (หน้าผากกว้าง คางเรียว): บ่งบอกถึงความคิดสร้างสรรค์ ฉลาด มีอุดมคติสูง และวิสัยทัศน์กว้างไกล"
   },
   SQUARE: {
-    title: "นักลงทุนสินทรัพย์จริง",
-    assets: "อสังหาริมทรัพย์, อุตสาหกรรมการผลิต, ทองคำ",
-    detail: "ใบหน้าทรงสี่เหลี่ยม บ่งบอกถึงความซื่อสัตย์ มั่นคง ตรงไปตรงมา เหมาะกับสินทรัพย์ที่จับต้องได้มากกว่าจินตนาการ"
+    title: "นักลงทุนสินทรัพย์จริง (Real Assets/Production)",
+    strategy: "เหมาะกับสินทรัพย์ที่จับต้องได้ เน้นความเป็นจริง",
+    assets: "สินทรัพย์: อสังหาริมทรัพย์, อุตสาหกรรมการผลิต, สินค้าโภคภัณฑ์",
+    detail: "ใบหน้าทรงสี่เหลี่ยม: บ่งบอกถึงนิสัยซื่อสัตย์ ตรงไปตรงมา มั่นคง และชอบงานที่เน้นความเป็นจริงมากกว่าจินตนาการ"
   },
   STRATEGIC: {
-    title: "นักลงทุนเชิงกลยุทธ์",
-    assets: "หุ้นคุณค่า (VI), กองทุนบริหารจัดการความเสี่ยง",
-    detail: "หน้าผากกว้างอิ่มเอิบ (วังการงาน) แสดงถึงสติปัญญาเลิศ เหมาะกับการเป็นนักลงทุนเชิงกลยุทธ์ที่ต้องวิเคราะห์ข้อมูลซับซ้อน"
+    title: "นักลงทุนเชิงกลยุทธ์ (Strategic Investor)",
+    strategy: "เหมาะกับการวิเคราะห์ข้อมูลซับซ้อนและการวางแผนระยะยาว",
+    assets: "สินทรัพย์: หุ้นคุณค่า (VI), กองทุนบริหารจัดการ, การลงทุนเชิงระบบ",
+    detail: "หน้าผากกว้างอิ่มเอิบ (วังการงาน): บ่งบอกถึงสติปัญญาเลิศ วิสัยทัศน์กว้างไกล มักได้รับการสนับสนุนที่ดีจากผู้ใหญ่"
   },
   PRESERVER: {
-    title: "เศรษฐีนักออม",
-    assets: "สินทรัพย์ปันผลสูง, กองทุนสะสมความมั่งคั่ง",
-    detail: "จมูกรูปชมพู่ปีกหนา (วังทรัพย์) บ่งบอกถึงวาสนาการเก็บเงินเก่งและความมั่งคั่งที่มั่นคงในระยะยาว"
+    title: "เศรษฐีนักสะสมทรัพย์ (Wealth Preserver)",
+    strategy: "เหมาะกับการสะสมทรัพย์และรักษาความมั่งคั่งยั่งยืน",
+    assets: "สินทรัพย์: หุ้นปันผลสูง, ออมทอง, กองทุนสะสมความมั่งคั่งระยะยาว",
+    detail: "จมูกรูปชมพู่ปีกหนา (วังทรัพย์): บ่งบอกถึงความสามารถในการเก็บออมและรักษาทรัพย์ได้ดีเยี่ยม มีวาสนาเป็นเศรษฐี"
   },
   AUTHORITY: {
-    title: "นักบริหารพอร์ตพาวเวอร์",
-    assets: "โครงการขนาดใหญ่, สินทรัพย์ผันผวนสูง, เก็งกำไร",
-    detail: "โหนกแก้มสูงมีเนื้อ บ่งบอกถึงอำนาจบารมี และความกล้าเสี่ยง กล้าได้กล้าเสียในงานใหญ่"
+    title: "นักบริหารพอร์ตพาวเวอร์ (Authority/Big Port)",
+    strategy: "เหมาะกับงานใหญ่ที่ต้องใช้บารมีและการบริหารจัดการคน",
+    assets: "สินทรัพย์: โครงการขนาดใหญ่ (Project-based), พอร์ตการลงทุนระดับสากล",
+    detail: "โหนกแก้มสูงอิ่ม ปากกว้าง: บ่งบอกถึงอำนาจบารมี ความมุ่งมั่น และศักยภาพในการทำงานใหญ่ให้สำเร็จ"
   }
 };
 
@@ -222,7 +229,7 @@ window.addEventListener('load', async () => {
   } catch(e) { alert("AI Setup Error: " + e.message); }
 });
 
-// --- CAMERA & FILE ---
+// --- UI CONTROLS ---
 async function toggleCamera() {
   const vid = document.getElementById('camVideo');
   const ph = document.getElementById('placeholder');
@@ -257,53 +264,65 @@ function handleFile(input) {
   reader.readAsDataURL(input.files[0]);
 }
 
-// --- ANALYSIS ---
+// --- CORE ANALYSIS ---
 async function runAnalysis() {
   const btn = document.getElementById('btnAnalyze');
   const source = currentSource === 'video' ? document.getElementById('camVideo') : document.getElementById('previewImg');
   document.getElementById('scanLine').style.display = 'block';
-  btn.disabled = true; btn.textContent = 'กำลังพินิจนรลักษณ์...';
+  btn.disabled = true; btn.textContent = 'กำลังประมวลผล...';
 
   try {
     const det = await faceapi.detectSingleFace(source, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
       .withFaceLandmarks().withFaceExpressions().withAgeAndGender();
 
-    if (!det) { alert("ไม่พบใบหน้า กรุณาปรับตำแหน่งให้ชัดเจน"); } 
+    if (!det) { alert("ไม่พบใบหน้าที่ชัดเจน กรุณาลองใหม่อีกครั้ง"); } 
     else {
-      const results = parsePhysiognomy(det);
+      const results = parseDetailedPhysiognomy(det);
       displayResult(results, det.age);
     }
   } catch(e) { alert("Error: " + e.message); }
   finally { document.getElementById('scanLine').style.display = 'none'; btn.disabled = false; btn.textContent = 'วิเคราะห์โหงวเฮ้งเศรษฐี ✦'; }
 }
 
-function parsePhysiognomy(det) {
+function parseDetailedPhysiognomy(det) {
   const lm = det.landmarks.positions;
+  
+  // 1. Scoring System for 6 Profiles
+  let scores = { ROUND: 0, TRIANGLE: 0, SQUARE: 0, STRATEGIC: 0, PRESERVER: 0, AUTHORITY: 0 };
+
+  // Face Geometry
   const jawWidth = dist(lm[0], lm[16]);
   const faceHeight = dist(lm[8], lm[27]) * 2.3;
   const ratio = jawWidth / faceHeight;
-  const jawSharpness = dist(lm[4], lm[12]) / jawWidth;
-  
-  let shape = 'OVAL';
-  if (ratio > 0.9) shape = 'ROUND';
-  else if (jawSharpness > 0.92) shape = 'SQUARE';
-  else if (ratio < 0.78) shape = 'TRIANGLE';
+  const jawAngle = dist(lm[4], lm[12]) / jawWidth;
 
+  // วังต่างๆ
   const foreheadH = dist(lm[21], lm[27]); 
   const noseH = dist(lm[27], lm[33]);
-  const isHighForehead = foreheadH > (noseH * 0.85);
   const noseW = dist(lm[31], lm[35]);
-  const isPearNose = noseW > (dist(lm[48], lm[54]) * 0.6);
-  const isHighCheek = (dist(lm[1], lm[15]) / jawWidth) > 1.05;
+  const mouthW = dist(lm[48], lm[54]);
+  const cheekDist = dist(lm[1], lm[15]);
 
+  // Scoring Logic (Weights)
+  if (ratio > 0.92) scores.ROUND += 15;
+  if (ratio < 0.78) scores.TRIANGLE += 15;
+  if (jawAngle > 0.93) scores.SQUARE += 15;
+  
+  if (foreheadH > noseH * 0.9) scores.STRATEGIC += 20;
+  if (noseW > mouthW * 0.62) scores.PRESERVER += 20;
+  if (cheekDist / jawWidth > 1.08) scores.AUTHORITY += 20;
+  if (mouthW / jawWidth > 0.45) scores.AUTHORITY += 10;
+
+  // Fallback Jitter to avoid static results
+  if (det.expressions.happy > 0.4) scores.ROUND += 5;
+  if (det.expressions.neutral > 0.6) scores.SQUARE += 5;
+
+  let cat = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+  // Warnings Logic
   let warnings = [];
-  if (foreheadH < noseH * 0.6) warnings.push("หน้าผากแคบ: การตัดสินใจอาจไม่ราบรื่น ต้องพึ่งพาตนเองเป็นหลักและรอบคอบเป็นพิเศษ");
-  if (lm[33].y < lm[31].y) warnings.push("จมูกเชิด: เก็บทรัพย์ไม่อยู่ ใช้จ่ายเก่ง ควรระวังการลงทุนที่มีความเสี่ยงสูงหรือใช้เงินก้อนใหญ่");
-
-  let cat = shape;
-  if (isHighForehead) cat = "STRATEGIC";
-  if (isHighCheek) cat = "AUTHORITY";
-  if (isPearNose) cat = "PRESERVER";
+  if (foreheadH < noseH * 0.65) warnings.push("หน้าผากแคบ: การตัดสินใจอาจไม่ราบรื่น ต้องอาศัยความพยายามและสติปัญญาตนเองอย่างมาก");
+  if (lm[33].y < lm[31].y - 3) warnings.push("จมูกเชิด: เก็บทรัพย์ไม่อยู่ ใช้จ่ายเก่ง ควรระวังการลงทุนเสี่ยงสูงเป็นพิเศษ");
 
   return { cat, warnings };
 }
@@ -311,34 +330,34 @@ function parsePhysiognomy(det) {
 function dist(p1, p2) { return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)); }
 
 function displayResult(res, age) {
-  const data = INTERPRETATIONS[res.cat] || INTERPRETATIONS.ROUND;
+  const data = CATEGORIES[res.cat];
   const ageInt = Math.round(age);
   
   document.getElementById('resType').textContent = data.title;
   document.getElementById('resAgeLabel').textContent = `ช่วงอายุ: ${ageInt} ปี`;
   document.getElementById('resDetailedReading').innerHTML = data.detail;
+  document.getElementById('resStrategy').textContent = data.strategy;
   document.getElementById('resAssets').textContent = data.assets;
   
-  // -- Age Based Advice & Portfolio Logic --
-  let stockP = 100 - ageInt;
-  if (stockP > 80) stockP = 80; // Cap at 80% based on user criteria
-  if (stockP < 0) stockP = 0;
-  
-  let safeP = 100 - stockP;
+  // -- Investment Life Cycle Logic --
+  let stockP = 0;
   let ageAdvice = "";
-
+  
+  // Rule of 100-age modified by your criteria
   if (ageInt < 20) {
-    ageAdvice = "วัยเรียน (อายุน้อยกว่า 20 ปี): เน้นการออมผ่านทองคำ, สลากออมทรัพย์ หรือเปิดบัญชีกองทุนรวมร่วมกับผู้ปกครอง เพื่อสร้างนิสัยการออม";
-    stockP = 50; safeP = 50; // Special case for children
+    stockP = 50; ageAdvice = "วัยเรียนรู้: เน้นออมทองหรือสลากออมทรัพย์ สร้างนิสัยการลงทุนเบื้องต้น";
   } else if (ageInt <= 30) {
-    ageAdvice = "วัยเริ่มต้นทำงาน: รับความเสี่ยงได้สูงที่สุด ควรเน้นหุ้นเติบโต (High Growth) หรือกองทุนต่างประเทศเพื่อให้เงินเติบโตมากที่สุด";
+    stockP = 80; ageAdvice = "วัยเริ่มต้นทำงาน: รับความเสี่ยงได้สูงที่สุด เน้นหุ้น High Growth เพื่อการเติบโตสูงสุด";
   } else if (ageInt <= 45) {
-    ageAdvice = "วัยสร้างครอบครัว: รายได้สูงขึ้นแต่ภาระก็สูงตาม ควรเริ่มกระจายความเสี่ยงไปสู่กองทุนตราสารหนี้ หรืออสังหาริมทรัพย์/REITs";
+    stockP = 60; ageAdvice = "วัยสร้างครอบครัว: รายได้สูงขึ้นแต่ภาระก็มาก ควรเริ่มกระจายไปกองทุนตราสารหนี้หรืออสังหาฯ";
   } else if (ageInt <= 55) {
-    ageAdvice = "วัยใกล้เกษียณ: เน้นความปลอดภัยของเงินต้น ลดการลงทุนในหุ้นที่ผันผวนสูง เตรียมสภาพคล่องเพื่อใช้จ่ายหลังเกษียณ";
+    stockP = 40; ageAdvice = "วัยใกล้เกษียณ: เน้นความปลอดภัยเงินต้น ลดหุ้นที่ผันผวนสูง เตรียมสภาพคล่องหลังเกษียณ";
   } else {
-    ageAdvice = "วัยเกษียณ: เน้นสภาพคล่องและความปลอดภัยสูงสุด เช่น เงินฝากดอกเบี้ยสูง กองทุนรวมตลาดเงิน เพื่อให้มีเงินใช้จ่ายสม่ำเสมอ";
+    stockP = 20; ageAdvice = "วัยเกษียณ: เน้นสภาพคล่องสูงสุด ความปลอดภัยอันดับหนึ่ง เช่น เงินฝากออมทรัพย์หรือตลาดเงิน";
   }
+
+  // Override by Rule of 100-age for fine tuning if preferred, but here we use your specific ranges
+  const safeP = 100 - stockP;
 
   document.getElementById('stockPct').textContent = stockP + "%";
   document.getElementById('safePct').textContent = safeP + "%";
