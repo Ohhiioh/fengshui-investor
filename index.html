@@ -215,20 +215,60 @@ window.addEventListener('load', async () => {
     modelsLoaded = true;
     document.getElementById('statusCard').style.display = 'none';
     document.getElementById('btnAnalyze').disabled = false;
-  } catch(e) { alert("AI Setup Error: " + e.message); }
+  } catch(e) { 
+    showStatusError("โหลด AI ล้มเหลว: โปรดรีเฟรชหน้าเว็บ");
+  }
 });
+
+function showStatusError(msg) {
+  const statusCard = document.getElementById('statusCard');
+  const statusTxt = document.getElementById('statusTxt');
+  statusCard.style.display = 'block';
+  statusCard.style.background = '#FFF5F5';
+  statusCard.style.borderColor = '#FED7D7';
+  statusTxt.textContent = msg;
+  statusTxt.style.color = 'var(--red)';
+}
 
 async function toggleCamera() {
   const vid = document.getElementById('camVideo');
   const ph = document.getElementById('placeholder');
   const canvas = document.getElementById('overlayCanvas');
+  const statusTxt = document.getElementById('statusTxt');
+  const statusCard = document.getElementById('statusCard');
   
   if (stream) {
     stopCamera();
   } else {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+      statusCard.style.display = 'block';
+      statusTxt.textContent = "กำลังเรียกใช้งานกล้อง...";
+      
+      // Try to get camera with user facing mode, fallback to any available camera
+      const constraints = { 
+        video: { 
+          facingMode: 'user',
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        } 
+      };
+      
+      try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (e) {
+        // Fallback for desktops without 'user' mode
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+      
       vid.srcObject = stream;
+      
+      // Wait for video to be ready and play
+      await new Promise((resolve) => {
+        vid.onloadedmetadata = () => {
+          vid.play().then(resolve);
+        };
+      });
+      
       vid.style.display = 'block';
       canvas.style.display = 'block';
       ph.style.display = 'none';
@@ -236,7 +276,12 @@ async function toggleCamera() {
       currentSource = 'video';
       detectionActive = true;
       startLiveDetection();
-    } catch(e) { alert("เปิดกล้องไม่ได้"); }
+      
+      statusCard.style.display = 'none';
+    } catch(e) { 
+      showStatusError("ไม่สามารถเข้าถึงกล้องได้: โปรดตรวจสอบการอนุญาตใช้งานกล้องในเบราว์เซอร์");
+      console.error("Camera error:", e);
+    }
   }
 }
 
@@ -244,6 +289,8 @@ function stopCamera() {
   const vid = document.getElementById('camVideo');
   const ph = document.getElementById('placeholder');
   const canvas = document.getElementById('overlayCanvas');
+  const statusCard = document.getElementById('statusCard');
+  
   if (stream) {
     stream.getTracks().forEach(t => t.stop());
     stream = null;
@@ -251,6 +298,7 @@ function stopCamera() {
     canvas.style.display = 'none';
     ph.style.display = 'flex';
     detectionActive = false;
+    statusCard.style.display = 'none';
   }
 }
 
@@ -278,25 +326,26 @@ async function startLiveDetection() {
   const loop = async () => {
     if (!detectionActive || !stream) return;
     
-    const detections = await faceapi.detectAllFaces(video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
-      .withFaceLandmarks();
-    
-    const resizedDetections = faceapi.resizeResults(detections, displaySize);
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw detection box and landmarks with custom style
-    resizedDetections.forEach(det => {
-        const box = det.detection.box;
-        ctx.strokeStyle = '#C9922A';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(box.x, box.y, box.width, box.height);
-        
-        // Draw some landmarks for "High-tech" feel
-        faceapi.draw.drawFaceLandmarks(canvas, det);
-    });
+    try {
+      const detections = await faceapi.detectAllFaces(video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
+        .withFaceLandmarks();
+      
+      const resizedDetections = faceapi.resizeResults(detections, displaySize);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      resizedDetections.forEach(det => {
+          const box = det.detection.box;
+          ctx.strokeStyle = '#C9922A';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(box.x, box.y, box.width, box.height);
+          faceapi.draw.drawFaceLandmarks(canvas, det);
+      });
+    } catch (e) {
+      console.error("Detection loop error:", e);
+    }
 
-    requestAnimationFrame(loop);
+    if (detectionActive) requestAnimationFrame(loop);
   };
   loop();
 }
@@ -305,12 +354,10 @@ async function runAnalysis() {
   const btn = document.getElementById('btnAnalyze');
   const source = currentSource === 'video' ? document.getElementById('camVideo') : document.getElementById('previewImg');
   const scanLine = document.getElementById('scanLine');
-  const canvas = document.getElementById('overlayCanvas');
   
   scanLine.style.display = 'block';
   btn.disabled = true;
   
-  // Briefly stop live detection to do high-quality capture
   const wasActive = detectionActive;
   detectionActive = false;
 
@@ -319,7 +366,7 @@ async function runAnalysis() {
       .withFaceLandmarks().withFaceExpressions().withAgeAndGender();
 
     if (!det) { 
-        alert("ไม่พบใบหน้า กรุณาลองใหม่"); 
+        showStatusError("ไม่พบใบหน้า: โปรดจัดตำแหน่งใบหน้าให้ชัดเจนและลองใหม่อีกครั้ง"); 
         detectionActive = wasActive;
         if(wasActive) startLiveDetection();
     } 
@@ -329,7 +376,7 @@ async function runAnalysis() {
       if (currentSource === 'video') stopCamera();
     }
   } catch(e) { 
-      alert("Error: " + e.message); 
+      showStatusError("เกิดข้อผิดพลาดในการวิเคราะห์");
       detectionActive = wasActive;
       if(wasActive) startLiveDetection();
   }
