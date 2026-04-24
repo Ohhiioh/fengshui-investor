@@ -35,7 +35,8 @@ h1 span { color: var(--gold); }
 
 .camera-box { border: 1px solid var(--border); border-radius: 20px; background: #000; overflow: hidden; position: relative; aspect-ratio: 3/4; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
 #camVideo, #previewImg { width: 100%; height: 100%; object-fit: cover; display: none; }
-.scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--gold); box-shadow: 0 0 15px var(--gold); animation: scan 2s linear infinite; display: none; z-index: 10; }
+#overlayCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; }
+.scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--gold); box-shadow: 0 0 15px var(--gold); animation: scan 2s linear infinite; display: none; z-index: 20; }
 @keyframes scan { from { top: 0%; } to { top: 100%; } }
 
 .btn-group { display: flex; gap: 10px; margin-bottom: 1.5rem; }
@@ -96,6 +97,7 @@ h1 span { color: var(--gold); }
   <div class="camera-box">
     <div class="scan-line" id="scanLine"></div>
     <video id="camVideo" autoplay playsinline muted></video>
+    <canvas id="overlayCanvas"></canvas>
     <img id="previewImg" />
     <div id="placeholder" style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); text-align:center; padding:2rem; font-size:14px;">
       ถ่ายรูปหรือเลือกรูปภาพเพื่อเปิดคำทำนาย
@@ -171,6 +173,7 @@ const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/mode
 let modelsLoaded = false;
 let stream = null;
 let currentSource = null;
+let detectionActive = false;
 
 const SHAPES = {
   OVAL: { name: "โครงหน้ารูปไข่ (วงรี)", desc: "สมบูรณ์แบบ เส้นกรอบใบหน้ารับกันอย่างสมดุลไม่มีเหลี่ยมตรงกราม", cat: "STRATEGIC" },
@@ -218,16 +221,36 @@ window.addEventListener('load', async () => {
 async function toggleCamera() {
   const vid = document.getElementById('camVideo');
   const ph = document.getElementById('placeholder');
+  const canvas = document.getElementById('overlayCanvas');
+  
   if (stream) {
-    stream.getTracks().forEach(t => t.stop()); stream = null;
-    vid.style.display = 'none'; ph.style.display = 'flex';
+    stopCamera();
   } else {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-      vid.srcObject = stream; vid.style.display = 'block';
-      ph.style.display = 'none'; document.getElementById('previewImg').style.display = 'none';
+      vid.srcObject = stream;
+      vid.style.display = 'block';
+      canvas.style.display = 'block';
+      ph.style.display = 'none';
+      document.getElementById('previewImg').style.display = 'none';
       currentSource = 'video';
+      detectionActive = true;
+      startLiveDetection();
     } catch(e) { alert("เปิดกล้องไม่ได้"); }
+  }
+}
+
+function stopCamera() {
+  const vid = document.getElementById('camVideo');
+  const ph = document.getElementById('placeholder');
+  const canvas = document.getElementById('overlayCanvas');
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    vid.style.display = 'none';
+    canvas.style.display = 'none';
+    ph.style.display = 'flex';
+    detectionActive = false;
   }
 }
 
@@ -236,8 +259,9 @@ function handleFile(input) {
   const reader = new FileReader();
   reader.onload = (e) => {
     const preview = document.getElementById('previewImg');
-    if(stream) toggleCamera();
-    preview.src = e.target.result; preview.style.display = 'block';
+    if(stream) stopCamera();
+    preview.src = e.target.result;
+    preview.style.display = 'block';
     document.getElementById('placeholder').style.display = 'none';
     document.getElementById('camVideo').style.display = 'none';
     currentSource = 'img';
@@ -245,53 +269,94 @@ function handleFile(input) {
   reader.readAsDataURL(input.files[0]);
 }
 
+async function startLiveDetection() {
+  const video = document.getElementById('camVideo');
+  const canvas = document.getElementById('overlayCanvas');
+  const displaySize = { width: video.offsetWidth, height: video.offsetHeight };
+  faceapi.matchDimensions(canvas, displaySize);
+
+  const loop = async () => {
+    if (!detectionActive || !stream) return;
+    
+    const detections = await faceapi.detectAllFaces(video, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
+      .withFaceLandmarks();
+    
+    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw detection box and landmarks with custom style
+    resizedDetections.forEach(det => {
+        const box = det.detection.box;
+        ctx.strokeStyle = '#C9922A';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(box.x, box.y, box.width, box.height);
+        
+        // Draw some landmarks for "High-tech" feel
+        faceapi.draw.drawFaceLandmarks(canvas, det);
+    });
+
+    requestAnimationFrame(loop);
+  };
+  loop();
+}
+
 async function runAnalysis() {
   const btn = document.getElementById('btnAnalyze');
   const source = currentSource === 'video' ? document.getElementById('camVideo') : document.getElementById('previewImg');
-  document.getElementById('scanLine').style.display = 'block';
+  const scanLine = document.getElementById('scanLine');
+  const canvas = document.getElementById('overlayCanvas');
+  
+  scanLine.style.display = 'block';
   btn.disabled = true;
+  
+  // Briefly stop live detection to do high-quality capture
+  const wasActive = detectionActive;
+  detectionActive = false;
 
   try {
     const det = await faceapi.detectSingleFace(source, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
       .withFaceLandmarks().withFaceExpressions().withAgeAndGender();
 
-    if (!det) { alert("ไม่พบใบหน้า กรุณาลองใหม่"); } 
+    if (!det) { 
+        alert("ไม่พบใบหน้า กรุณาลองใหม่"); 
+        detectionActive = wasActive;
+        if(wasActive) startLiveDetection();
+    } 
     else {
       const results = parseTechnicalPhysiognomy(det);
       displayResult(results, det);
+      if (currentSource === 'video') stopCamera();
     }
-  } catch(e) { alert("Error: " + e.message); }
-  finally { document.getElementById('scanLine').style.display = 'none'; btn.disabled = false; }
+  } catch(e) { 
+      alert("Error: " + e.message); 
+      detectionActive = wasActive;
+      if(wasActive) startLiveDetection();
+  }
+  finally { scanLine.style.display = 'none'; btn.disabled = false; }
 }
 
 function parseTechnicalPhysiognomy(det) {
   const lm = det.landmarks.positions;
   
-  // 1.Measurements
   const jawWidth = dist(lm[0], lm[16]);
   const foreheadWidth = dist(lm[17], lm[26]);
   const cheekWidth = dist(lm[1], lm[15]);
   const faceHeight = dist(lm[8], lm[27]) * 2.3;
   const ratioH = jawWidth / faceHeight;
 
-  // Eye Ratio (Height/Width)
   const leftEye = det.landmarks.getLeftEye();
   const eyeH = dist(leftEye[1], leftEye[5]);
   const eyeW = dist(leftEye[0], leftEye[3]);
   const eyeRatio = eyeH / eyeW;
 
-  // Mouth Scale
   const mouthW = dist(lm[48], lm[54]);
   const mouthScale = mouthW / jawWidth;
-
-  // Nose Scale
   const noseW = dist(lm[31], lm[35]);
 
-  // Expression
   const expr = det.expressions;
   const topExpr = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
 
-  // 2. Shape Logic
   let shapeKey = "OVAL";
   if (ratioH > 0.95) shapeKey = "ROUND";
   else if (ratioH < 0.75) shapeKey = "RECTANGLE";
@@ -300,7 +365,6 @@ function parseTechnicalPhysiognomy(det) {
   else if (jawWidth > foreheadWidth * 1.1) shapeKey = "PEAR";
   else if (Math.abs(jawWidth - foreheadWidth) < 15 && ratioH > 0.85) shapeKey = "SQUARE";
 
-  // 3. Category Scoring
   let finalCat = SHAPES[shapeKey].cat;
   if (noseW > mouthW * 0.65) finalCat = "PRESERVER";
   if (eyeRatio > 0.3) finalCat = "STRATEGIC";
@@ -319,7 +383,6 @@ function displayResult(res, rawDet) {
   document.getElementById('resType').textContent = data.title;
   document.getElementById('resAgeLabel').textContent = `${res.gender === 'male' ? 'ชาย' : 'หญิง'} / ประมาณ ${ageInt} ปี`;
   
-  // Chips
   const chips = [
     `รูปหน้า: ${res.shapeKey}`,
     `ดวงตา: ${res.eyeRatio > 0.28 ? 'โตกว้าง' : 'เรียวยาว'}`,
@@ -333,7 +396,6 @@ function displayResult(res, rawDet) {
   document.getElementById('resStrategy').textContent = data.strategy;
   document.getElementById('resAssets').textContent = data.assets;
   
-  // Portfolio Logic
   let stockP = 0;
   let ageAdvice = "";
   if (ageInt <= 30) { stockP = 80; ageAdvice = "วัยเริ่มต้นทำงาน: เน้น Aggressive Growth ใช้พลังของเวลาให้เกิดประโยชน์สูงสุด"; }
