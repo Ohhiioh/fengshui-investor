@@ -49,7 +49,7 @@ h1 span { color: var(--gold); }
 .res-header { background: var(--ink); color: white; padding: 2rem 1.5rem; text-align: center; border-bottom: 4px solid var(--gold); }
 .res-type { font-family: 'Noto Serif Thai', serif; font-size: 24px; color: var(--gold-light); letter-spacing: -0.5px; }
 .res-body { padding: 1.75rem; background: #fff; }
-.res-section { margin-bottom: 1.5rem; border-left: 3px solid var(--gold-pale); padding-left: 18px; position: relative; }
+.res-section { margin-bottom: 1.75rem; border-left: 3px solid var(--gold-pale); padding-left: 18px; position: relative; }
 .res-section::before { content: ''; position: absolute; left: -3px; top: 0; height: 30%; border-left: 3px solid var(--gold); }
 .res-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 1px; }
 .res-text { font-size: 14px; color: var(--ink-mid); }
@@ -339,31 +339,34 @@ function displayResult(res, age) {
   document.getElementById('resStrategy').textContent = data.strategy;
   document.getElementById('resAssets').textContent = data.assets;
   
-  // -- Investment Life Cycle Logic --
+  // -- Investment Life Cycle Logic (Updated based on user's professional guide) --
   let stockP = 0;
   let ageAdvice = "";
   
-  // Rule of 100-age modified by your criteria
-  if (ageInt < 20) {
-    stockP = 50; ageAdvice = "วัยเรียนรู้: เน้นออมทองหรือสลากออมทรัพย์ สร้างนิสัยการลงทุนเบื้องต้น";
+  if (ageInt < 21) {
+    stockP = 50; 
+    ageAdvice = "วัยเรียนรู้: เน้นออมผ่านสลากออมทรัพย์หรือออมทองร่วมกับผู้ปกครองเพื่อสร้างวินัยการเงินพื้นฐาน";
   } else if (ageInt <= 30) {
-    stockP = 80; ageAdvice = "วัยเริ่มต้นทำงาน: รับความเสี่ยงได้สูงที่สุด เน้นหุ้น High Growth เพื่อการเติบโตสูงสุด";
+    stockP = 80; // Avg of 70-90%
+    ageAdvice = "วัยเริ่มต้นทำงาน: พลังของเวลาและการเติบโตเชิงรุก เน้นพอร์ตแบบ Aggressive Growth เพื่อผลตอบแทนทบต้นระยะยาว ควรมีทองคำ 5-10% กระจายความเสี่ยง";
   } else if (ageInt <= 45) {
-    stockP = 60; ageAdvice = "วัยสร้างครอบครัว: รายได้สูงขึ้นแต่ภาระก็มาก ควรเริ่มกระจายไปกองทุนตราสารหนี้หรืออสังหาฯ";
-  } else if (ageInt <= 55) {
-    stockP = 40; ageAdvice = "วัยใกล้เกษียณ: เน้นความปลอดภัยเงินต้น ลดหุ้นที่ผันผวนสูง เตรียมสภาพคล่องหลังเกษียณ";
+    stockP = 50; 
+    ageAdvice = "วัยสร้างครอบครัว (Sandwich Generation): เน้นความสมดุลระหว่างการเติบโตและการควบคุมความเสี่ยง (Balanced) เริ่มสะสมหุ้นปันผลและประกันสุขภาพ/ชีวิต";
+  } else if (ageInt <= 60) {
+    stockP = 30; // Avg of 20-40%
+    ageAdvice = "วัยเตรียมเกษียณ (Peak Earning): เน้นการรักษาความมั่งคั่ง (Wealth Preservation) ลดความเสี่ยง และใช้สิทธิ์ลดหย่อนภาษี RMF/SSF/ThaiESG ให้เต็มที่";
   } else {
-    stockP = 20; ageAdvice = "วัยเกษียณ: เน้นสภาพคล่องสูงสุด ความปลอดภัยอันดับหนึ่ง เช่น เงินฝากออมทรัพย์หรือตลาดเงิน";
+    stockP = 15; // Avg of 10-20%
+    ageAdvice = "วัยเกษียณ: บริหารรายได้ประจำและสู้กับเงินเฟ้อ (Longevity Risk) เน้นสินทรัพย์สภาพคล่องสูงและความปลอดภัยสูงสุดเพื่อใช้จ่ายสม่ำเสมอ";
   }
 
-  // Override by Rule of 100-age for fine tuning if preferred, but here we use your specific ranges
   const safeP = 100 - stockP;
 
   document.getElementById('stockPct').textContent = stockP + "%";
   document.getElementById('safePct').textContent = safeP + "%";
   document.getElementById('stockBar').style.width = stockP + "%";
   document.getElementById('safeBar').style.width = safeP + "%";
-  document.getElementById('resAgeAdvice').textContent = ageAdvice;
+  document.getElementById('resAgeAdvice').innerHTML = `<strong>กลยุทธ์ตามช่วงวัย:</strong> ${ageAdvice}<br/><br/><small>• กฎพื้นฐาน: 100 ลบด้วยอายุ<br/>• แนะนำกลยุทธ์ Core & Satellite และการรีบาลานซ์พอร์ตทุก 6-12 เดือน</small>`;
 
   const warnBox = document.getElementById('resWarning');
   const warnTxt = document.getElementById('resWarningTxt');
