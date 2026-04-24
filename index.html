@@ -40,7 +40,7 @@ h1 span { color: var(--gold); }
 @keyframes scan { from { top: 0%; } to { top: 100%; } }
 
 .btn-group { display: flex; gap: 10px; margin-bottom: 1.5rem; }
-.btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--gold); font-family: inherit; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; }
+.btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--gold); font-family: inherit; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 .btn-outline { background: transparent; color: var(--gold); }
 .btn-gold { background: var(--gold); color: white; border: none; }
 .btn:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -68,6 +68,13 @@ h1 span { color: var(--gold); }
 .age-advice { background: var(--gold-pale); padding: 12px 15px; border-radius: 12px; border: 1px dashed var(--gold); margin-top: 10px; font-size: 13px; color: var(--ink-mid); }
 .warning-box { background: #FFF5F5; border: 1px solid #FED7D7; padding: 15px; border-radius: 16px; margin-top: 15px; }
 .warning-title { color: var(--red); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+
+/* CALL TO ACTION SECTION */
+.cta-area { border-top: 1px solid var(--border); padding: 2rem 1.5rem; background: var(--paper-dark); text-align: center; }
+.cta-title { font-family: 'Noto Serif Thai', serif; font-size: 18px; font-weight: 700; margin-bottom: 1rem; color: var(--ink); }
+.cta-buttons { display: flex; flex-direction: column; gap: 12px; }
+.btn-line { background: #00B900; color: white; border: none; }
+.btn-line:hover { background: #009900; }
 
 .wisdom-footer { padding: 20px; text-align: center; font-family: 'Noto Serif Thai', serif; font-size: 14px; color: var(--ink-soft); border-top: 1px solid var(--border); background: var(--paper-dark); }
 </style>
@@ -158,9 +165,25 @@ h1 span { color: var(--gold); }
         <div class="warning-title">⚠️ ข้อควรระวังสำหรับการลงทุน</div>
         <div class="res-text" id="resWarningTxt" style="font-size:13px;">—</div>
       </div>
-
-      <button class="btn btn-outline" style="width:100%; margin-top:2rem;" onclick="resetAll()">วิเคราะห์คนใหม่</button>
     </div>
+
+    <!-- NEW CALL TO ACTION SECTION -->
+    <div class="cta-area">
+      <div class="cta-title">ก้าวแรกสู่ความมั่งคั่งตามวาสนาคุณ</div>
+      <div class="cta-buttons">
+        <a href="https://www.phillip.co.th/th/application-pocket" target="_blank" class="btn btn-gold" style="width:100%;">
+          ✨ เปิดบัญชีลงทุน Phillip Pocket ออนไลน์
+        </a>
+        <a href="https://line.me/ti/p/@phillipdc" target="_blank" class="btn btn-line" style="width:100%;">
+          💬 สอบถามผู้เชี่ยวชาญ LINE: @phillipdc
+        </a>
+      </div>
+    </div>
+
+    <div style="padding: 1.5rem;">
+      <button class="btn btn-outline" style="width:100%;" onclick="resetAll()">วิเคราะห์คนใหม่</button>
+    </div>
+
     <div class="wisdom-footer">
       "นรลักษณ์บอกแนวโน้ม ความรู้บอกแนวทาง<br/>วินัยบอกความสำเร็จ"
     </div>
@@ -244,7 +267,6 @@ async function toggleCamera() {
       statusCard.style.display = 'block';
       statusTxt.textContent = "กำลังเรียกใช้งานกล้อง...";
       
-      // Try to get camera with user facing mode, fallback to any available camera
       const constraints = { 
         video: { 
           facingMode: 'user',
@@ -256,13 +278,11 @@ async function toggleCamera() {
       try {
         stream = await navigator.mediaDevices.getUserMedia(constraints);
       } catch (e) {
-        // Fallback for desktops without 'user' mode
         stream = await navigator.mediaDevices.getUserMedia({ video: true });
       }
       
       vid.srcObject = stream;
       
-      // Wait for video to be ready and play
       await new Promise((resolve) => {
         vid.onloadedmetadata = () => {
           vid.play().then(resolve);
